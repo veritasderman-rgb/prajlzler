@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Karta pro recepce hotelů (tisk) | AutoPraizler M.L.</title>
+  <meta name="description" content="Tisková karta s telefonem a QR kódem pro recepce hotelů a penzionů v Mariánských Lázních. Pomoc hostům při poruše auta.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .card-wrap { padding: 32px 0; }
+    .print-card {
+      width: 148mm; max-width: 100%; margin: 0 auto; background: #fff; color: var(--ink);
+      border: 1px solid var(--line); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow);
+      font-family: var(--font-body);
+    }
+    .print-card .top { background: linear-gradient(160deg, var(--orange-light), var(--orange) 55%, var(--orange-dark)); padding: 8mm 8mm 6mm; }
+    .print-card .top img { height: 16mm; width: auto; }
+    .print-card .body { padding: 6mm 8mm 7mm; display: grid; grid-template-columns: 1fr auto; gap: 6mm; align-items: center; }
+    .print-card h2 { font-size: 22pt; line-height: 1.05; margin: 0 0 3mm; }
+    .print-card .line { font-size: 11pt; margin: 0 0 1.5mm; }
+    .print-card .line b { font-family: var(--font-head); text-transform: uppercase; letter-spacing: .05em; color: var(--orange-dark); margin-right: 4px; }
+    .print-card .tel { display: block; font-family: var(--font-head); font-size: 26pt; font-weight: 700; margin: 3mm 0 2mm; color: var(--ink); text-decoration: none; letter-spacing: .02em; }
+    .print-card .addr { font-size: 9.5pt; color: var(--muted); margin: 0; }
+    .print-card .qrs { display: grid; gap: 3mm; text-align: center; font-size: 8pt; color: var(--muted); }
+    .print-card .qrs img { width: 30mm; height: 30mm; margin: 0 auto 1mm; }
+    @media print {
+      @page { size: A5 landscape; margin: 8mm; }
+      body { background: #fff; }
+      .card-wrap { padding: 0; }
+      .print-card { box-shadow: none; border: 0; width: 100%; }
+      .print-card .top { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html"><img src="assets/logo/autopraizler-logo.svg" alt="AutoPraizler M.L." width="230" height="58"></a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
+    <nav class="nav" id="nav" aria-label="Hlavní navigace">
+      <a href="pomoc-v-nouzi.html" class="nav-sos">Pomoc v nouzi</a>
+      <a href="sluzby.html">Služby</a>
+      <a href="o-nas.html">O nás</a>
+      <a href="recenze.html">Recenze</a>
+      <a href="kontakt.html">Kontakt</a>
+      <div class="lang">
+        <a href="index.html" lang="cs">CZ</a>
+        <a href="de/" lang="de" hreflang="de">DE</a>
+        <a href="en/" lang="en" hreflang="en">EN</a>
+      </div>
+    </nav>
+    <a class="btn btn-primary header-phone" href="tel:+420728920290">728 920 290</a>
+  </div>
+</header>
+
+<main>
+  <section class="sand no-print tight">
+    <div class="narrow">
+      <p class="eyebrow">Pro hotely a penziony</p>
+      <h1>Karta pro recepce</h1>
+      <p class="lead">Vytiskněte na A5 (na šířku), zalaminujte a nechte na recepci. Host s problémem naskenuje QR kód a má telefon nebo informace ve svém jazyce.</p>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="window.print()">Vytisknout</button>
+        <a class="btn btn-outline" href="pomoc-v-nouzi.html">Zpět na Pomoc v nouzi</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="card-wrap">
+    <div class="print-card">
+      <div class="top">
+        <img src="assets/logo/autopraizler-logo.svg" alt="AutoPraizler M.L.">
+      </div>
+      <div class="body">
+        <div>
+          <h2>Autopanne? Car trouble? Porucha auta?</h2>
+          <p class="line" lang="de"><b>DE</b> Rufen Sie an, wir helfen Ihnen schnell. Wir sprechen Deutsch.</p>
+          <p class="line" lang="en"><b>EN</b> Call us, we will help you quickly. We speak English.</p>
+          <p class="line"><b>CZ</b> Zavolejte, pomůžeme rychle. Autoservis a pneuservis.</p>
+          <a class="tel" href="tel:+420728920290">+420 728 920 290</a>
+          <p class="addr">AutoPraizler M.L. · U Mlékárny 844/8a, Mariánské Lázně (u nádraží / am Bahnhof / near the railway station) · Mo–Do 8–17, Fr 8–15 · WhatsApp</p>
+        </div>
+        <div class="qrs">
+          <div><img src="assets/img/qr-tel.svg" alt="QR kód: zavolat +420 728 920 290">Anrufen · Call</div>
+          <div><img src="assets/img/qr-hilfe.svg" alt="QR kód: autopraizler.cz/de/hilfe.html">Info DE · EN</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
