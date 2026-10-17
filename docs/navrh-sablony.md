@@ -43,7 +43,7 @@ Omezení zjištěné při revizi (dokumentace Polylangu, 17. 10. 2026): u blokov
 | WPML | cca 99 EUR/rok | zbytečně silný a placený pro 9 stránek |
 | TranslatePress | free jen 1 jazyk navíc | potřebujeme 2 jazyky navíc, tedy placená verze |
 
-Postup u doporučeného řešení: rodičovské stránky `/de/` a `/en/` jsou zároveň DE a EN úvod; podstránky `/de/hilfe/`, `/de/kontakt/`, `/en/help/`, `/en/contact/`. Šablona `page-de` / `page-en` se přiřadí při založení stránky (předpřipravíme). Stránky bez překladu (Služby, Ceník, O nás, Recenze) `hreflang` nedostanou. Atribut `lang` dokumentu se nastaví podle šablony. Otevírací doba a kontakt v DE/EN patičce jsou samostatné synchronizované vzory „Kontaktní údaje DE“ a „Kontaktní údaje EN“ (tři vzory místo jednoho, při změně doby se upraví tři místa; při 3 jazycích přijatelné).
+Postup u doporučeného řešení: rodičovské stránky `/de/` a `/en/` jsou zároveň DE a EN úvod; podstránky `/de/hilfe/`, `/de/kontakt/`, `/en/help/`, `/en/contact/`. Šablona `page-de` / `page-en` se přiřadí při založení stránky (předpřipravíme). Stránky bez překladu (Služby, Ceník, O nás, Recenze) `hreflang` nedostanou. Na DE/EN stránkách child theme přepne **celý locale požadavku**, ne jen atribut `lang`: brzký filtr `locale` (nebo `switch_to_locale()` po určení dotazované stránky) nastaví `de_DE` resp. `en_US` podle rodičovské stránky, aby řetězce WordPressu, pluginů (formulář, `og:locale` SEO pluginu) a formáty datumů byly v jazyce stránky. Jazykové balíčky de_DE a en_US se doinstalují v Nastavení → Obecné, výchozí jazyk webu zůstane čeština. Otevírací doba a kontakt v DE/EN patičce jsou samostatné synchronizované vzory „Kontaktní údaje DE“ a „Kontaktní údaje EN“ (tři vzory místo jednoho, při změně doby se upraví tři místa; při 3 jazycích přijatelné).
 
 ## 4. Minimální sada pluginů
 
@@ -73,7 +73,7 @@ wp/
   themes/autopraizler/        child theme Twenty Twenty-Five
     style.css                 hlavička child theme + CSS z assets/css/style.css
     theme.json                barvy, písma Barlow, rozestupy
-    functions.php             enqueue, povolení SVG pro admina, schema.org AutoRepair (jediný zdroj schema na webu), hreflang a přepínač jazyků z pole „překlad“, omezení Site Editoru
+    functions.php             enqueue, povolení SVG pro admina, schema.org AutoRepair (jediný zdroj schema na webu), přepnutí locale na de_DE / en_US pro DE a EN větev, hreflang a přepínač jazyků z pole „překlad“, omezení Site Editoru
     patterns/                 vzory: karta služby, karta recenze, krok, FAQ, tabulka ceníku, výzva Zavolat
     parts/                    hlavička, patička, mobilní lišta, každá v CZ, DE a EN variantě
     templates/                page, page-de, page-en, page-karta-pro-recepce (tisk)
