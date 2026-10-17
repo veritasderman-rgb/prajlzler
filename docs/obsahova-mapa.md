@@ -114,7 +114,7 @@ Do WordPressu nahrát jen: logo (SVG z `assets/logo/`, povolit SVG upload pro ad
 | # | Otázka | Ovlivní |
 |---|---|---|
 | 1 | **Otevírací doba.** Starý web: Po–Pá 8–17 s pauzou 12–13. Google a návrh: Po–Čt 8–17, Pá 8–15. Firmy.cz: 8–12, 13–17. Co platí? | Úvod, Kontakt, patička, karta, DE/EN, schema.org, Google profil |
-| 2 | **Hosting a e-mail.** Komu patří účet u SvetHostingu (web i pošta tam běží)? Platí ho Jarda, nebo FineNet? | kde nový web poběží, migrace pošty |
+| 2 | **Hosting a e-mail.** Komu patří účet u SvetHostingu (web i příchozí pošta tam běží)? Platí ho Jarda, nebo FineNet? Existuje tam schránka servis@ a kde ji Jarda čte? Ví, že zároveň platí u Forpsi nevyužitý Windows hosting PIDI+mail (508 Kč/rok)? | kde nový web poběží, migrace pošty, zrušení PIDI |
 | 3 | **Ceník.** Platí ceny z března 2026? Smí být na webu jako text? | Ceník |
 | 4 | **Služby.** Trvá motoservis, autopůjčovna, likvidace autovraků, LPG/CNG (Elpigas), odtah, tažná zařízení? Autobazar (nápis na štítu)? | Služby, Úvod |
 | 5 | **„Až 60 %“** úspory na dílech: chce to Jarda na webu? | Služby |
