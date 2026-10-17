@@ -103,17 +103,31 @@ Veřejný ceník Forpsi neuvádí u Hosting Basic verzi PHP ani cron. Zda na ně
 
 **Doporučení:** nejdřív zjistit, komu patří účet u SvetHostingu a zda tam existuje schránka servis@ (otázka pro Jardu, případně dotaz na FineNet). Pokud lze účet převést na Jardu, je varianta A nejbezpečnější a nejlevnější. Pokud ne, varianta B s pečlivě naplánovanou migrací pošty ve fázi 6. V obou případech hosting PIDI+mail u Forpsi po migraci zrušit (ne dřív: dokud není jasné, kde je servis@, nic nerušit).
 
-## 4. Staging (josefpavlovic.cz)
+## 4. Staging (josefpavlovic.cz u Wedosu)
 
-- DNS josefpavlovic.cz je u Wedosu (ns.wedos.cz/.eu/.com/.net), ale A záznam apexu i `auto.josefpavlovic.cz` míří na **216.150.1.1, což je Vercel** (web josefpavlovic.cz je nasazený na Vercelu, projekt `website-jp`). Subdoména `auto` tedy už dnes resolvuje, ale na Vercel, kde WordPress (PHP + MySQL) provozovat nelze.
-- Pro WordPress staging na `auto.josefpavlovic.cz` je potřeba **webhosting u Wedosu** (nebo jinde) a změna A záznamu subdomény v DNS Wedos na IP toho hostingu. Zda účet u Wedosu webhosting má, z venku nezjistím.
+Odečteno z Zákaznického centra Wedos 17. 10. 2026 (jen čtení).
+
+| Položka | Zjištění |
+|---|---|
+| Webhosting | josefpavlovic.cz, tarif **NoLimit**, Linux, zřízen 7. 1. 2013, **expirace 7. 1. 2027** |
+| PHP | nastaveno 8.1 (Wedos nabízí až 8.5, výchozí 8.3) |
+| Databáze | 3 aktivní MariaDB (d35745_019xaf 13 MB, d35745_josef 10 MB, d35745_test 2 MB), 1 smazaná |
+| Disk | bez limitu; web 1 726 MB, DB 25 MB, e-mail 0 MB |
+| FTP/FTPS | server 35745.w45.wedos.net, 1 účet |
+| IP hostingu | **46.28.105.77**, IPv6 2a02:2b88:1:4::29 |
+| Subdomény | složka `/subdom/<název>/` přes FTP + vlastní DNS záznam (Wedos je v administraci nepřidává) |
+| HTTPS | „podpora HTTPS“ aktivní (Let's Encrypt), u subdomény ověřit po nasazení |
+| E-mail | schránka admin na hostingu, MX ale míří na Google Workspace, hosting poštu neobsluhuje |
+
+DNS zóna josefpavlovic.cz (22 záznamů, DNSSEC, poslední změna 14. 8. 2026): apex A i wildcard `*` A míří na **216.150.1.1 (Vercel)**, web josefpavlovic.cz běží na Vercelu (projekt `website-jp`). Záznam `auto` v zóně není, subdoména dnes resolvuje přes wildcard na Vercel. Z webhostingu Wedos tedy aktuálně neběží nic veřejně dostupného.
+
+**Závěr:** webhosting Wedos NoLimit WordPress staging unese (PHP 8.1, MariaDB, bez limitu disku). Potřebuje jediný DNS záznam, viz `docs/staging.md`. Hosting expiruje 7. 1. 2027; pokud staging poběží déle, je potřeba ho prodloužit, nebo staging přesunout.
 
 ## 5. Co zbývá ověřit v administraci (Forpsi, Wedos), jen čtení
 
 Forpsi: **hotovo 17. 10. 2026** (viz část 3 a 1). Nezjištěno zůstává jen datum poslední změny zóny (podpora Forpsi) a jméno jediné schránky (administrace ho nezobrazuje, zřejmě postmaster@).
 
-Wedos:
-1. Má účet webhosting (např. NoLimit)? Pokud ano, jakou IP adresu mu Wedos přiděluje pro A záznam subdomény `auto`.
+Wedos: **hotovo 17. 10. 2026** (viz část 4). Zbývá ověřit až při nasazení: zda NoLimit dovolí založit další databázi a zda Let's Encrypt vystaví certifikát pro subdomenu ve složce `/subdom/`.
 
 Jarda:
 2. Existuje schránka servis@autopraizler.cz, kde ji čte (webmail, Outlook, telefon) a přes který server odesílá? Podle MX musí být u SvetHostingu.
