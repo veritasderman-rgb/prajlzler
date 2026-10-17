@@ -8,13 +8,13 @@
 - **Opakované bloky jako synchronizované vzory** (Synced Patterns, dříve Reusable Blocks): upraví se na jednom místě, změna se projeví všude. Jarda mění text, ne rozložení.
 - **Nesynchronizované vzory (Block Patterns)** pro věci, které se opakují tvarem, ale ne obsahem: karta služby, karta recenze, krok postupu, FAQ položka. Jarda vloží vzor a přepíše text.
 - **Globální údaje** (telefon, e-mail, adresa, otevírací doba) jen na jednom místě: v synchronizovaném vzoru „Kontaktní údaje“ a v patičce. Nikde v textu stránek natvrdo.
-- Vícejazyčnost: každá CZ stránka s překladem má DE a EN variantu jako samostatnou stránku propojenou pluginem (viz `docs/navrh-sablony.md`).
+- Vícejazyčnost: každá CZ stránka s překladem má DE a EN variantu jako samostatnou stránku pod rodičovskou stránkou `/de/` resp. `/en/`, s vlastní šablonou (hlavička a patička v daném jazyce). Propojení pro `hreflang` a přepínač jazyků řeší child theme, bez překladového pluginu (viz `docs/navrh-sablony.md`, část 3).
 
 ## 2. Mapa stránek
 
 | URL (CZ) | Stránka | Zdroj textu | DE | EN | Poznámka |
 |---|---|---|---|---|---|
-| `/` | Úvod | `index.html` | `/de/` | `/en/` | úvodní stránka webu |
+| `/` | Úvod | `index.html` | `/de/` | `/en/` | úvodní stránka webu; `/de/` a `/en/` jsou rodičovské stránky DE a EN větve |
 | `/pomoc-v-nouzi/` | Pomoc v nouzi | `pomoc-v-nouzi.html` | `/de/hilfe/` | `/en/help/` | hlavní stránka konceptu |
 | `/sluzby/` | Služby | `sluzby.html` + doplnění ze starého webu | ne | ne | URL shodná se starým webem |
 | `/cenik/` | Ceník | `obsah/puvodni/cenik.md` (ceník 2026) | ne | ne | **nová stránka**, URL shodná se starým webem |
@@ -25,7 +25,17 @@
 | `/ochrana-osobnich-udaju/` | Ochrana osobních údajů | nové (PDF ze starého webu jen jako podklad) | ne | ne | **nová stránka**, povinná kvůli formuláři |
 | `/dekujeme/` | Poděkování po odeslání formuláře | nové, 3 věty | ne | ne | `noindex`, volitelné |
 
-Přesměrování 301 ze starého webu: `/usetrete/` → `/sluzby/`, `/ahoj-vsichni/` → `/`, `/zkusebni-stranka/` → `/` (již existuje). Ostatní URL zůstávají.
+Přesměrování 301 ze starého webu:
+
+| Stará URL | Cíl |
+|---|---|
+| `/usetrete/` | `/sluzby/` |
+| `/ahoj-vsichni/` | `/` |
+| `/zkusebni-stranka/` | `/` (již existuje) |
+| `/wp-content/uploads/2026/03/Orientacni-cenik-2026.pdf` | `/cenik/` (nebo zachovat schválenou kopii PDF na stejné URL, pokud ho Jarda šíří tiskem nebo QR kódem, otázka 3) |
+| `/wp-content/uploads/2023/12/00-Zasady-zpracovani-osobnich-udaju-aktualizovane.pdf` | `/ochrana-osobnich-udaju/` |
+
+Ostatní URL (`/`, `/sluzby/`, `/cenik/`, `/kontakt/`) zůstávají beze změny. Odkazy na obě PDF mohou být v e-mailech nebo na tiskovinách, proto nesmí skončit na 404.
 
 Menu (hlavní): Pomoc v nouzi, Služby, Ceník, O nás, Recenze, Kontakt, přepínač CZ/DE/EN, telefon. Menu DE a EN: Pannenhilfe / Breakdown help, Kontakt / Contact, zpět na CZ.
 
@@ -114,8 +124,8 @@ Do WordPressu nahrát jen: logo (SVG z `assets/logo/`, povolit SVG upload pro ad
 | # | Otázka | Ovlivní |
 |---|---|---|
 | 1 | **Otevírací doba.** Starý web: Po–Pá 8–17 s pauzou 12–13. Google a návrh: Po–Čt 8–17, Pá 8–15. Firmy.cz: 8–12, 13–17. Co platí? | Úvod, Kontakt, patička, karta, DE/EN, schema.org, Google profil |
-| 2 | **Hosting a e-mail.** Komu patří účet u SvetHostingu (web i pošta tam běží)? Platí ho Jarda, nebo FineNet? | kde nový web poběží, migrace pošty |
-| 3 | **Ceník.** Platí ceny z března 2026? Smí být na webu jako text? | Ceník |
+| 2 | **Hosting a e-mail.** Komu patří účet u SvetHostingu (web i příchozí pošta tam běží)? Platí ho Jarda, nebo FineNet? Existuje tam schránka servis@ a kde ji Jarda čte? Ví, že zároveň platí u Forpsi nevyužitý Windows hosting PIDI+mail (508 Kč/rok)? | kde nový web poběží, migrace pošty, zrušení PIDI |
+| 3 | **Ceník.** Platí ceny z března 2026? Smí být na webu jako text? Šíří Jarda někde odkaz na PDF ceníku (tisk, QR), aby zůstalo PDF na původní URL? | Ceník, přesměrování |
 | 4 | **Služby.** Trvá motoservis, autopůjčovna, likvidace autovraků, LPG/CNG (Elpigas), odtah, tažná zařízení? Autobazar (nápis na štítu)? | Služby, Úvod |
 | 5 | **„Až 60 %“** úspory na dílech: chce to Jarda na webu? | Služby |
 | 6 | **Pojišťovny**, se kterými spolupracuje. | Služby, Pomoc v nouzi |

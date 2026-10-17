@@ -13,8 +13,8 @@
 | `/kontakt/` | adresa, telefon, e-mail, pracovní doba, GPS, formulář, 2 fotky provozovny | `/kontakt/` | otevírací doba (liší se) |
 | `/ahoj-vsichni/` | výchozí testovací příspěvek WordPressu | nikam, 301 na `/` nebo 410 | nic |
 | `/zkusebni-stranka/` | slug úvodní stránky, už dnes 301 na `/` | `/` | nic |
-| `/wp-content/uploads/2026/03/Orientacni-cenik-2026.pdf` | ceník PDF | `/cenik/` (nebo nový PDF) | zda ho Jarda někde šíří (QR, tisk) |
-| `/wp-content/uploads/2023/12/00-Zasady-zpracovani-osobnich-udaju-aktualizovane.pdf` | zásady zpracování osobních údajů (12/2023) | nová stránka `/ochrana-osobnich-udaju/` | obsah PDF neprošel kontrolou, stáhnout a projít |
+| `/wp-content/uploads/2026/03/Orientacni-cenik-2026.pdf` | ceník PDF | 301 na `/cenik/`, nebo zachovat kopii PDF na stejné URL | zda ho Jarda někde šíří (QR, tisk); odkaz nesmí skončit na 404 |
+| `/wp-content/uploads/2023/12/00-Zasady-zpracovani-osobnich-udaju-aktualizovane.pdf` | zásady zpracování osobních údajů (12/2023) | 301 na novou stránku `/ochrana-osobnich-udaju/` | obsah PDF neprošel kontrolou, stáhnout a projít |
 | `/sitemap.xml`, `/post-sitemap.xml`, `/page-sitemap.xml`, `/category-sitemap.xml` | sitemapy AIOSEO | generuje nový SEO plugin | `/category-sitemap.xml` 17. 10. nedostupná |
 | `/feed/`, `/comments/feed/` | RSS | vypnout nebo nechat (WordPress generuje sám) | |
 
@@ -112,7 +112,7 @@ Pravidlo ze zadání: na veřejný web jen prokazatelně Jardovy fotky. Rozliše
 | Obrázky | alt texty z roku 2021 typu „Levný autoservis Mariánské Lázně“ (keyword stuffing), ceník jako obrázek bez textu |
 | Výkon | nemeřeno; úvod 78 kB HTML + Enfold (jQuery, slider) |
 
-Doporučení pro nový web: zachovat URL `/sluzby/`, `/cenik/`, `/kontakt/`; `/usetrete/` a `/ahoj-vsichni/` přesměrovat; doplnit meta description, jeden H1 na stránku, hreflang pro DE/EN, schema.org z návrhu.
+Doporučení pro nový web: zachovat URL `/sluzby/`, `/cenik/`, `/kontakt/`; `/usetrete/`, `/ahoj-vsichni/` a obě PDF přesměrovat; doplnit meta description, jeden H1 na stránku, hreflang pro DE/EN, schema.org z návrhu.
 
 ## 7. Otázky pro Jardu vyplývající z inventury
 

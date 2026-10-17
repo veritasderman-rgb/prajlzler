@@ -1,14 +1,15 @@
 # Audit hostingu a domény autopraizler.cz (fáze 1)
 
-*Stav k 17. 10. 2026. Jen čtení z veřejných zdrojů (DNS, HTTP hlavičky, veřejné REST API WordPressu, ceníky poskytovatelů). Do administrace Forpsi ani na FTP jsem se nepřihlašoval, viz část „Co zbývá ověřit v administraci“.*
+*Stav k 17. 10. 2026. Jen čtení: veřejné zdroje (DNS, HTTP hlavičky, veřejné REST API WordPressu, ceníky poskytovatelů) a odečet z administrace Forpsi (provedl Josef, nic neměnil, hesla neotevíral). Na FTP ani do administrace SvetHostingu a Wedosu se nikdo nepřihlašoval, viz část 5.*
 
 ## Shrnutí
 
-1. **Web ani e-mail neběží na Forpsi.** U Forpsi je pouze registrace domény a DNS (nameservery ns.forpsi.cz/.it/.net). A záznam míří na server `px01.svethostingu.cz` (83.167.244.201) a MX na `mail.svethostingu.cz`. Hosting i pošta jsou tedy u **SvetHostingu.cz**. Předpoklad zadání, že web běží na Forpsi minihostingu, neplatí.
-2. **Starý web je už dnes WordPress** (verze 5.6.22, šablona Enfold, pluginy All in One SEO, Wordfence, Complianz, WP Popups Lite). Otázka „utáhne tarif WordPress“ je tím zodpovězená: stávající hosting WordPress utáhne, protože na něm běží.
+1. **Web ani e-mail neběží na Forpsi, ačkoli se tam hosting platí.** Na účtu u Forpsi je doména a tarif **Webhosting PIDI+mail** (508,20 Kč/rok, Windows, bez PHP a bez databáze, 500 MB, 1 schránka). A záznam ale míří na server `px01.svethostingu.cz` (83.167.244.201, síť LHOLUB-2-CZ-MAI, Libor Holub) a MX na `mail.svethostingu.cz`. Web i příchozí pošta jsou tedy u **SvetHostingu.cz**; hosting u Forpsi web neobsluhuje a jeho jediná schránka (postmaster) příchozí poštu nedostává. **Odchozí poštu přes `smtp.forpsi.com` vyloučit nelze:** v administraci Forpsi je DKIM pro smtp.forpsi.com aktivní, takže Jardův poštovní klient může přes Forpsi odesílat. Dokud Jarda nepotvrdí, přes který server odesílá, nelze tarif PIDI+mail označit za zbytečný ani ho rušit. Předpoklad zadání, že web a e-maily běží na Forpsi minihostingu, neplatí.
+2. **Tarif PIDI+mail u Forpsi WordPress neutáhne** (Windows hosting, PHP „n/a“, 0 databází, 0 subdomén, bez SSL). Starý web je už dnes WordPress (verze 5.6.22, šablona Enfold, pluginy All in One SEO, Wordfence, Complianz, WP Popups Lite) a běží na SvetHostingu, který WordPress zjevně utáhne.
 3. **Web běží.** 17. 10. 2026 odpovídá 200 na `https://autopraizler.cz/`. Nedostupnost z 2. 10. 2026 byla buď přechodná, nebo souvisela se změnou v DNS zóně: sériové číslo SOA je `2026093001`, zóna byla tedy naposledy upravena **30. 9. 2026**. Web je navíc za proxy (`x-proxy-id: 01`), z této sítě se spojení občas resetuje a je nutné opakovat.
 4. **Klíčové riziko: kdo vlastní hosting u SvetHostingu.** V patičce starého webu je `© FineNet – Na netu v pohodě`, tedy autor webu. Pokud je hosting (a tím i poštovní schránky servis@ a postmaster@) vedený na účet autora, nelze web jen „přesunout na Forpsi“ bez souhlasu a součinnosti autora a bez migrace e-mailů. Toto je první otázka pro Jardu.
-5. **E-mail nemá SPF, DKIM ani DMARC.** V zóně není žádný TXT záznam. Pošta ze servis@ může padat do spamu. Netýká se fáze 1 (nic neměníme), ale patří do fáze 6 k nápravě, ať už pošta zůstane kdekoli.
+5. **E-mail nemá SPF ani DMARC.** V zóně není žádný TXT záznam. DKIM pro SvetHostingu existuje (selektor `sh512` jako CNAME na `dkim.svethostingu.cz`), DKIM pro Forpsi je v administraci aktivní, ale v zóně chybí (bez významu, dokud se přes Forpsi neposílá). Pošta ze servis@ může padat do spamu. Netýká se fáze 1 (nic neměníme), patří do fáze 6, ať už pošta zůstane kdekoli.
+6. **Doména je v pořádku:** registrovaná 24. 6. 2011, expirace 24. 6. 2027, DNSSEC zapnuto, majitel Jaroslav Praizler / AutoPraizler M.L. Hosting PIDI+mail expiruje 29. 6. 2027.
 
 ## 1. DNS zóna (referenční zápis, dotaz přes DNS over HTTPS 17. 10. 2026)
 
@@ -26,12 +27,15 @@
 | imap | CNAME | imap.svethostingu.cz → mail-st.svethostingu.cz (212.158.159.123) | 1800 |
 | pop3 | CNAME | pop3.svethostingu.cz → mail-st.svethostingu.cz | 1800 |
 | webmail | CNAME | webmail.forpsi.com (81.2.195.208) | 1800 |
-| mail, ftp, autoconfig, autodiscover, _dmarc | CNAME | autopraizler.cz (chová se jako wildcard `*` na apex) | 1800 |
-| *._domainkey | TXT | žádný nalezený DKIM selektor (zkoušeno default, forpsi, mail, dkim, selector1/2, google, k1, s1, s2) | |
+| `*` (wildcard) | CNAME | autopraizler.cz (potvrzeno v administraci Forpsi; proto mail, ftp, autoconfig, autodiscover i _dmarc vrací apex) | 1800 |
+| sh512._domainkey | CNAME | dkim.svethostingu.cz (TXT `v=DKIM1; k=rsa; p=…`, DKIM pro odesílání přes SvetHostingu) | 1800 |
+| (DKIM Forpsi) | TXT | chybí; v administraci Forpsi je DKIM pro smtp.forpsi.com aktivní, ale záznam v zóně není | |
 
 Poznámky:
-- `webmail` míří na Forpsi, zatímco MX, smtp, imap a pop3 na SvetHostingu. Buď pozůstatek z doby, kdy pošta běžela u Forpsi, nebo omyl. **Ověřit v administraci Forpsi, kde fyzicky leží schránky.** Dokud to není jasné, MX ani ostatní poštovní záznamy neměnit.
-- `_dmarc` jako CNAME na apex znamená, že DMARC politika neexistuje.
+- Zóna zobrazená v administraci Forpsi má přesně 8 záznamů: A, `*` CNAME, imap, pop3, sh512._domainkey, smtp, webmail a MX. Žádný TXT. Shoduje se s veřejným DNS.
+- `webmail` míří na Forpsi, zatímco MX, smtp, imap a pop3 na SvetHostingu. V administraci Forpsi je 1 schránka (postmaster), ale příchozí pošta jde podle MX na SvetHostingu. Buď pozůstatek z doby, kdy pošta běžela u Forpsi, nebo omyl. **Kde ve skutečnosti existuje servis@ a kde ho Jarda čte, je otázka pro Jardu.** Dokud to není jasné, MX ani ostatní poštovní záznamy neměnit.
+- `_dmarc` jako CNAME na apex (vedlejší efekt wildcardu) znamená, že DMARC politika neexistuje.
+- Historii změn zóny administrace Forpsi nezobrazuje; změnu kolem 30. 9. 2026 (SOA serial) by musela dohledat podpora Forpsi.
 
 ## 2. Co běží na hostingu (zjištěno z venku)
 
@@ -61,11 +65,28 @@ Struktura souborů na FTP a databáze: **neověřeno**, vyžaduje přístup k ho
 
 Který tarif má autopraizler.cz, z venku nezjistím. Pro malý WordPress stačí BASIC nebo STANDARD.
 
-### Forpsi (kde je doména)
+### Forpsi (kde je doména): co účet má dnes
+
+| Položka | Zjištění z administrace (17. 10. 2026) |
+|---|---|
+| Tarif | **Webhosting PIDI+mail** (objednávka W00887331), 508,20 Kč/rok, stejná částka od roku 2020, expirace 29. 6. 2027 |
+| Systém | Windows hosting, server c166wh.forpsi.com (81.2.194.166), PHP „n/a“ |
+| Místo | 500 MB (využití se nezobrazuje) |
+| Databáze | 0 (žádná MySQL ani MariaDB) |
+| Subdomény, aliasy | 0 |
+| FTP | ano (login autopraizlercz, WebFTP); SFTP ani SSH ne |
+| SSL | žádný certifikát, DV SSL lze vydat |
+| Cron | není vidět |
+| E-mail | max. 10 schránek po 10 GB, vytvořena 1 (postmaster), Business mail ne |
+| Doména | .cz, objednávka D00887330, expirace 24. 6. 2027, DNSSEC zapnuto, NSSET FORPSI; poslední platba 721,16 Kč (6/2023) |
+
+**Závěr: na tomto tarifu WordPress provozovat nelze** (není PHP ani databáze). Web na něm neběží a příchozí pošta jde podle MX na SvetHostingu. Jediné, k čemu může tarif dnes sloužit, je odesílání pošty přes `smtp.forpsi.com` (DKIM aktivní); to musí potvrdit Jarda. Pokud přes Forpsi neodesílá, platí 508 Kč ročně za nevyužitou službu.
+
+### Forpsi: veřejný ceník tarifů, na které lze přejít
 
 | Tarif | Cena | DB | PHP | Subdomény | Poznámka |
 |---|---|---|---|---|---|
-| Hosting Basic (prodávaný k doméně) | od 15 Kč/měs (cca 180 Kč/rok) | 1 GB pro databázi | ano | neuvedeno | zřejmě to, čemu zadání říká „minihosting“. **Ověřit v administraci, zda ho účet vůbec má a jaké má limity.** |
+| Hosting Basic (prodávaný k doméně) | od 15 Kč/měs (cca 180 Kč/rok) | 1 GB pro databázi | ano | neuvedeno | na účtu není; místo něj je PIDI+mail (viz výše) |
 | Easy Hosting Linux | 780 Kč/rok (první rok 390 Kč) | 1× MySQL 8.0 | 8.3–8.5 | 5 | DV SSL, FTP/FTPS, SSH, instalátor WordPressu (Softaculous). Pro WordPress dostačuje. |
 | Advanced Hosting Linux | 1 800 Kč/rok | 3× MySQL | 8.3–8.5 | 15 | zbytečně velký |
 
@@ -75,33 +96,50 @@ Veřejný ceník Forpsi neuvádí u Hosting Basic verzi PHP ani cron. Zda na ně
 
 | Varianta | Roční náklad (bez domény) | Pro | Proti |
 |---|---|---|---|
-| A. Zůstat u SvetHostingu, převést účet na Jardu | 588 až 948 Kč | žádná migrace pošty, WordPress tam už běží, nejméně práce i rizika | závisí na součinnosti autora starého webu (FineNet); neznámý tarif a stav účtu |
-| B. Forpsi Easy Hosting Linux, přesun webu i pošty | 780 Kč (390 Kč první rok) | vše u jednoho poskytovatele spolu s doménou, moderní PHP | nutná migrace e-mailových schránek (servis@, postmaster@) včetně přenosu zpráv a změna MX, největší riziko výpadku pošty |
-| C. Forpsi Hosting Basic („minihosting“) | cca 180 Kč | nejlevnější | neověřeno, že WordPress unese; žádné subdomény; stejná migrace pošty jako B |
-| D. Web jinde (např. Wedos), Forpsi jen doména, pošta zůstane u SvetHostingu | dle poskytovatele | pošta se nedotkne | dva až tři poskytovatelé, horší správa pro Jardu |
+Dnešní roční náklad závisí na tom, kdo platí SvetHostingu, a to zatím nevíme (otázka pro Jardu). Proto dva scénáře: **S1** SvetHostingu platí Jarda (dnes celkem 508 + 588 až 948 = **1 096 až 1 456 Kč/rok**), **S2** SvetHostingu platí někdo jiný, např. FineNet (dnes Jarda platí jen **508 Kč/rok** za PIDI). Zrušení PIDI je ve všech variantách podmíněné tím, že přes smtp.forpsi.com Jarda neodesílá.
 
-**Doporučení:** nejdřív zjistit, komu patří účet u SvetHostingu (otázka pro Jardu, případně dotaz na FineNet). Pokud ho lze převést na Jardu, je varianta A nejbezpečnější. Pokud ne, varianta B s pečlivě naplánovanou migrací pošty ve fázi 6.
+| Varianta | Roční náklad (bez domény) | Rozdíl proti dnešku | Pro | Proti |
+|---|---|---|---|---|
+| A. Zůstat u SvetHostingu, účet převést na Jardu; PIDI+mail zrušit | 588 až 948 Kč | S1: úspora 508 Kč. S2: nárůst o 80 až 440 Kč (začne platit, co dnes platí jiný) | žádná migrace pošty, WordPress tam už běží, nejméně práce i rizika | závisí na součinnosti provozovatele účtu u SvetHostingu (FineNet / Libor Holub); neznámý tarif a stav účtu |
+| B. Forpsi Easy Hosting Linux místo PIDI+mail, přesun webu i pošty, SvetHostingu zrušit | 780 Kč (390 Kč první rok) | S1: **úspora 316 až 676 Kč**. S2: nárůst o 272 Kč | vše u jednoho poskytovatele spolu s doménou, moderní PHP, SSL v ceně | nutná migrace e-mailových schránek ze SvetHostingu včetně přenosu zpráv a změna MX, největší riziko výpadku pošty; Forpsi nabízí u změny Windows → Linux zřejmě novou službu, ne upgrade (ověřit u podpory) |
+| C. Ponechat PIDI+mail a web dát jinam | 508 Kč + hosting jinde | nárůst | nic | PIDI web neobsluhuje; smysl jen pokud se přes něj odesílá pošta a Jarda to chce zachovat |
+| D. Web jinde (např. Wedos), Forpsi jen doména, pošta zůstane u SvetHostingu, PIDI zrušit | hosting jinde (+ SvetHostingu v S1) | S1: závisí na ceně hostingu, minus 508 Kč | pošta se nedotkne | dva až tři poskytovatelé, horší správa pro Jardu |
 
-## 4. Staging (josefpavlovic.cz)
+**Doporučení:** rozhodnutí odložit, dokud Jarda nezodpoví tři otázky: kdo platí SvetHostingu, kde existuje servis@ a přes který server odesílá. Ve scénáři S1 (platí Jarda) je nejlevnější varianta B, ale s rizikem migrace pošty; varianta A je nejbezpečnější. Ve scénáři S2 je nejlevnější a nejbezpečnější varianta A, pokud provozovatel účtu souhlasí s převodem. PIDI+mail u Forpsi rušit až po migraci a jen pokud se přes smtp.forpsi.com neodesílá.
 
-- DNS josefpavlovic.cz je u Wedosu (ns.wedos.cz/.eu/.com/.net), ale A záznam apexu i `auto.josefpavlovic.cz` míří na **216.150.1.1, což je Vercel** (web josefpavlovic.cz je nasazený na Vercelu, projekt `website-jp`). Subdoména `auto` tedy už dnes resolvuje, ale na Vercel, kde WordPress (PHP + MySQL) provozovat nelze.
-- Pro WordPress staging na `auto.josefpavlovic.cz` je potřeba **webhosting u Wedosu** (nebo jinde) a změna A záznamu subdomény v DNS Wedos na IP toho hostingu. Zda účet u Wedosu webhosting má, z venku nezjistím.
+## 4. Staging (josefpavlovic.cz u Wedosu)
+
+Odečteno z Zákaznického centra Wedos 17. 10. 2026 (jen čtení).
+
+| Položka | Zjištění |
+|---|---|
+| Webhosting | josefpavlovic.cz, tarif **NoLimit**, Linux, zřízen 7. 1. 2013, **expirace 7. 1. 2027** |
+| PHP | nastaveno 8.1 (Wedos nabízí až 8.5, výchozí 8.3) |
+| Databáze | 3 aktivní MariaDB (d35745_019xaf 13 MB, d35745_josef 10 MB, d35745_test 2 MB), 1 smazaná |
+| Disk | bez limitu; web 1 726 MB, DB 25 MB, e-mail 0 MB |
+| FTP/FTPS | server 35745.w45.wedos.net, 1 účet |
+| IP hostingu | **46.28.105.77**, IPv6 2a02:2b88:1:4::29 |
+| Subdomény | složka `/subdom/<název>/` přes FTP + vlastní DNS záznam (Wedos je v administraci nepřidává) |
+| HTTPS | „podpora HTTPS“ aktivní (Let's Encrypt), u subdomény ověřit po nasazení |
+| E-mail | schránka admin na hostingu, MX ale míří na Google Workspace, hosting poštu neobsluhuje |
+
+DNS zóna josefpavlovic.cz (22 záznamů, DNSSEC, poslední změna 14. 8. 2026): apex A i wildcard `*` A míří na **216.150.1.1 (Vercel)**, web josefpavlovic.cz běží na Vercelu (projekt `website-jp`). Záznam `auto` v zóně není, subdoména dnes resolvuje přes wildcard na Vercel. Z webhostingu Wedos tedy aktuálně neběží nic veřejně dostupného.
+
+**Závěr:** webhosting Wedos NoLimit WordPress staging unese (PHP 8.1, MariaDB, bez limitu disku). Potřebuje jediný DNS záznam, viz `docs/staging.md`. Hosting expiruje 7. 1. 2027; pokud staging poběží déle, je potřeba ho prodloužit, nebo staging přesunout.
 
 ## 5. Co zbývá ověřit v administraci (Forpsi, Wedos), jen čtení
 
-Forpsi (admin.forpsi.com):
-1. Seznam služeb na účtu: jen doména, nebo i hosting či e-mail? Název tarifu, datum expirace domény i hostingu.
-2. Pokud je tam hosting: verze PHP, počet a typ databází, místo na disku, FTP/SFTP, SSL, cron.
-3. Kde jsou vedené schránky servis@ a postmaster@: v sekci e-mail u Forpsi, nebo nikde (pak jsou u SvetHostingu)?
-4. DNS zóna tak, jak ji Forpsi zobrazuje: zejména zda existuje záznam `*` (wildcard) CNAME na apex a proč `webmail` míří na Forpsi.
-5. Kdo je uvedený jako vlastník a technický kontakt domény (Jarda, nebo FineNet).
+Forpsi: **hotovo 17. 10. 2026** (viz část 3 a 1). Nezjištěno zůstává jen datum poslední změny zóny (podpora Forpsi) a jméno jediné schránky (administrace ho nezobrazuje, zřejmě postmaster@).
 
-Wedos:
-6. Má účet webhosting (např. NoLimit)? Pokud ano, jakou IP adresu mu Wedos přiděluje pro A záznam subdomény.
+Wedos: **hotovo 17. 10. 2026** (viz část 4). Zbývá ověřit až při nasazení: zda NoLimit dovolí založit další databázi a zda Let's Encrypt vystaví certifikát pro subdomenu ve složce `/subdom/`.
+
+Jarda:
+2. Existuje schránka servis@autopraizler.cz, kde ji čte (webmail, Outlook, telefon) a přes který server odesílá? Podle MX musí být u SvetHostingu.
+3. Kdo je smluvní partner u SvetHostingu (FineNet, Libor Holub, nebo Jarda sám) a kdo ho platí?
 
 SvetHostingu (až budou přístupy):
-7. Tarif, verze PHP, FTP struktura, velikost databáze, export textů (ne databáze s uživateli, repozitář je veřejný).
+4. Tarif, verze PHP, FTP struktura, velikost databáze, seznam schránek, export textů (ne databáze s uživateli, repozitář je veřejný).
 
 ## 6. Co se ve fázi 1 neměnilo
 
-Nic. Žádný DNS záznam, žádné nastavení domény ani hostingu.
+Nic. Žádný DNS záznam, žádné nastavení domény ani hostingu, ani v administraci Forpsi (jen čtení, hesla neotevřena).
