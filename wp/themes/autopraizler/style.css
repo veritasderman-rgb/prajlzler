@@ -1,0 +1,1084 @@
+/*
+Theme Name: AutoPraizler
+Theme URI: https://github.com/veritasderman-rgb/prajlzler
+Description: Blokové child theme Twenty Twenty-Five pro web autoservisu AutoPraizler M.L. v Mariánských Lázních. Barvy a písmo Barlow z loga, karty služeb a recenzí, pevná mobilní lišta Zavolat + WhatsApp, tisková karta pro recepce a vícejazyčnost CZ/DE/EN bez překladového pluginu.
+Author: josefpavlovic.cz
+Template: twentytwentyfive
+Version: 0.1.0
+Requires at least: 6.7
+Tested up to: 7.1
+Requires PHP: 8.1
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: autopraizler
+Tags: full-site-editing, block-patterns, custom-colors, editor-style, one-column, translation-ready
+*/
+
+/* Barvy, písma, velikosti písma a rozestupy definuje theme.json (CSS proměnné
+   --wp--preset--*). Tady je jen to, co theme.json neumí: komponenty z návrhu
+   (assets/css/style.css ve statickém návrhu), mobilní lišta, hlavička, tisk. */
+
+:root {
+  --ap-radius: 14px;
+  --ap-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  --ap-font-head: var(--wp--preset--font-family--barlow-condensed);
+  --ap-font-body: var(--wp--preset--font-family--barlow);
+  --ap-dark-text: #e9e6df;
+}
+
+/* ---------- Základ ---------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* místo pro pevnou mobilní lištu s telefonem */
+.wp-site-blocks {
+  padding-bottom: 72px;
+}
+
+@media (min-width: 900px) {
+  .wp-site-blocks {
+    padding-bottom: 0;
+  }
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+/* nadpis → následující blok těsněji než běžná mezera mezi bloky */
+.wp-block-heading + :is(p, ul, ol, figure, .wp-block-buttons, .wp-block-table) {
+  margin-block-start: 0.6rem;
+}
+
+.eyebrow {
+  font-family: var(--ap-font-head);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.95rem;
+  color: var(--wp--preset--color--orange-dark);
+  font-weight: 700;
+}
+
+.eyebrow + * {
+  margin-block-start: 0.4em;
+}
+
+.lead {
+  font-size: var(--wp--preset--font-size--lead);
+  color: var(--wp--preset--color--ink-soft);
+}
+
+.note {
+  font-size: var(--wp--preset--font-size--small);
+  color: var(--wp--preset--color--muted);
+}
+
+.narrow {
+  max-width: 780px;
+}
+
+/* ---------- Tmavé a oranžové sekce (podle barvy pozadí z palety) ------- */
+
+.has-black-background-color,
+.has-footer-background-color {
+  color: var(--ap-dark-text);
+}
+
+.has-black-background-color :is(h1, h2, h3, h4),
+.has-footer-background-color :is(h1, h2, h3, h4) {
+  color: #fff;
+}
+
+.has-black-background-color a:not(.wp-block-button__link),
+.has-footer-background-color a:not(.wp-block-button__link) {
+  color: var(--wp--preset--color--orange-light);
+}
+
+.has-black-background-color .lead,
+.has-black-background-color .note {
+  color: var(--ap-dark-text);
+}
+
+.has-black-background-color .card {
+  background: #2a2a2a;
+  border-color: #3a3a3a;
+  color: var(--ap-dark-text);
+}
+
+.has-black-background-color .checks li::before {
+  background: var(--wp--preset--color--orange-light);
+}
+
+.has-orange-gradient-background,
+.has-orange-gradient-background :is(.eyebrow, .lead, .note, h1, h2, h3) {
+  color: var(--wp--preset--color--black);
+}
+
+/* ---------- Tlačítka ----------------------------------------------------- */
+
+.wp-block-button__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  white-space: nowrap;
+  line-height: 1.2;
+  transition: transform 0.12s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.wp-block-button__link:active {
+  transform: translateY(1px);
+}
+
+.wp-block-button.is-style-dark > .wp-block-button__link {
+  background-color: var(--wp--preset--color--black);
+  color: #fff;
+  border-color: var(--wp--preset--color--black);
+}
+
+.wp-block-button.is-style-dark > .wp-block-button__link:hover {
+  background-color: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.wp-block-button.is-style-outline-light > .wp-block-button__link {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.wp-block-button.is-style-outline-light > .wp-block-button__link:hover {
+  background-color: #fff;
+  color: var(--wp--preset--color--black);
+  border-color: #fff;
+}
+
+.wp-block-button.is-style-whatsapp > .wp-block-button__link {
+  background-color: var(--wp--preset--color--whatsapp);
+  color: #063;
+  border-color: var(--wp--preset--color--whatsapp);
+}
+
+.wp-block-button.is-style-whatsapp > .wp-block-button__link:hover {
+  background-color: #1ebe5b;
+  color: #042;
+  border-color: #1ebe5b;
+}
+
+/* ikony: telefon (třída btn-phone na tlačítku) a WhatsApp (styl whatsapp) */
+.wp-block-button.btn-phone > .wp-block-button__link::before,
+.wp-block-button.is-style-whatsapp > .wp-block-button__link::before {
+  content: "";
+  flex: none;
+  width: 20px;
+  height: 20px;
+  background-color: currentColor;
+  -webkit-mask: var(--ap-icon) center / contain no-repeat;
+  mask: var(--ap-icon) center / contain no-repeat;
+}
+
+.wp-block-button.btn-phone > .wp-block-button__link::before {
+  --ap-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z'/></svg>");
+}
+
+.wp-block-button.is-style-whatsapp > .wp-block-button__link::before {
+  --ap-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.1.6 2.8.5a2.4 2.4 0 0 0 1.6-1.1 2 2 0 0 0 .1-1.1c0-.2-.2-.2-.5-.3z'/></svg>");
+}
+
+/* ---------- Hlavička ----------------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--wp--preset--color--line);
+}
+
+.site-header__inner {
+  min-height: 72px;
+  gap: 16px;
+}
+
+.site-header .brand {
+  margin: 0;
+  flex: none;
+}
+
+/* obrázek loga má v markupu width:230px / height:auto, SVG nemá vlastní rozměr */
+.site-header .brand img {
+  height: 38px !important;
+  width: auto !important;
+  max-width: 60vw;
+}
+
+.site-header__nav {
+  gap: 8px;
+  margin-left: auto;
+}
+
+.site-header .wp-block-navigation .wp-block-navigation-item {
+  white-space: nowrap;
+}
+
+.site-header__nav .wp-block-navigation {
+  order: 2; /* na mobilu je tlačítko Menu až za přepínačem jazyků */
+}
+
+.site-header .wp-block-navigation a.wp-block-navigation-item__content {
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--wp--preset--color--black);
+}
+
+.site-header .wp-block-navigation a.wp-block-navigation-item__content:hover,
+.site-header .wp-block-navigation .current-menu-item > a.wp-block-navigation-item__content {
+  background: var(--wp--preset--color--sand);
+  color: var(--wp--preset--color--orange-dark);
+}
+
+.site-header .wp-block-navigation .nav-sos > a.wp-block-navigation-item__content {
+  color: var(--wp--preset--color--orange-dark);
+}
+
+/* tlačítko Menu (hamburger bez ikony, s textem) */
+.site-header .wp-block-navigation__responsive-container-open,
+.site-header .wp-block-navigation__responsive-container-close {
+  border: 2px solid var(--wp--preset--color--black);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-family: var(--ap-font-head);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--wp--preset--color--black);
+  background: none;
+  cursor: pointer;
+}
+
+.site-header .wp-block-navigation__responsive-container.is-menu-open {
+  padding: 24px 16px;
+}
+
+.site-header .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__container {
+  gap: 4px;
+}
+
+.site-header .wp-block-navigation__responsive-container.is-menu-open a.wp-block-navigation-item__content {
+  font-size: 1.35rem;
+  padding: 12px 10px;
+}
+
+/* návrh přepíná na desktopové menu až od 900 px, blok navigace už od 600 px */
+@media (min-width: 600px) and (max-width: 899px) {
+  .site-header .wp-block-navigation__responsive-container:not(.hidden-by-default):not(.is-menu-open) {
+    display: none;
+  }
+
+  .site-header .wp-block-navigation__responsive-container-open:not(.always-shown) {
+    display: flex;
+  }
+}
+
+.site-header .wp-block-buttons.header-phone {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .site-header .brand img {
+    height: 46px !important;
+  }
+
+  .site-header__nav .wp-block-navigation {
+    order: 0;
+  }
+
+  .site-header .wp-block-buttons.header-phone {
+    display: flex;
+  }
+
+  .header-phone .wp-block-button__link {
+    padding: 10px 18px;
+    font-size: 1.05rem;
+  }
+}
+
+/* přepínač jazyků (blok autopraizler/language-switcher) */
+.lang {
+  display: flex;
+  gap: 2px;
+  padding-left: 12px;
+  border-left: 1px solid var(--wp--preset--color--line);
+  font-family: var(--ap-font-head);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.lang a {
+  font-size: 0.95rem;
+  padding: 6px 8px;
+  color: var(--wp--preset--color--muted);
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+.lang a:hover {
+  color: var(--wp--preset--color--black);
+  background: var(--wp--preset--color--sand);
+}
+
+.lang a[aria-current="page"] {
+  color: var(--wp--preset--color--black);
+  font-weight: 700;
+}
+
+/* ---------- Hero ------------------------------------------------------------ */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-top: clamp(80px, 12vw, 140px);
+  padding-bottom: clamp(36px, 5vw, 64px);
+  background-color: var(--wp--preset--color--black);
+  background-size: cover;
+  background-position: center 65%;
+  color: #fff;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.25) 0%, rgba(20, 20, 20, 0.55) 45%, rgba(20, 20, 20, 0.88) 100%);
+}
+
+.hero.small {
+  min-height: 380px;
+}
+
+.hero > * {
+  width: 100%;
+}
+
+/* nadpis a perex mají omezenou šířku; omezené rozložení by je vystředilo,
+   proto je zarovnáme k levému okraji obsahového sloupce */
+.hero > h1,
+.hero > .lead {
+  margin-left: max(0px, calc((100% - var(--wp--style--global--content-size)) / 2)) !important;
+}
+
+.hero h1 {
+  color: #fff;
+  max-width: 14ch;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+}
+
+.hero .lead {
+  color: #f1efe9;
+  max-width: 52ch;
+  font-size: 1.25rem;
+}
+
+.hero-sub {
+  color: var(--wp--preset--color--orange-light);
+  font-family: var(--ap-font-head);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-sub + * {
+  margin-block-start: 0.3em;
+}
+
+.hero .wp-block-buttons {
+  margin-block-start: 1.2em;
+}
+
+.phone-big,
+.phone-big a {
+  font-family: var(--ap-font-head);
+  font-size: clamp(2rem, 7vw, 3.4rem);
+  font-weight: 700;
+  color: inherit;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  display: inline-block;
+  margin: 0.2em 0 0;
+}
+
+/* dva vstupy pod hero */
+.entry {
+  margin-block-start: 32px;
+  gap: 16px;
+}
+
+.entry .wp-block-column {
+  background: #fff;
+  border-radius: var(--ap-radius);
+  padding: 22px 24px;
+  box-shadow: var(--ap-shadow);
+  border-top: 6px solid var(--wp--preset--color--orange);
+  color: var(--wp--preset--color--black);
+  transition: transform 0.15s ease;
+}
+
+.entry .wp-block-column:hover {
+  transform: translateY(-3px);
+}
+
+.entry .wp-block-column.alt {
+  border-top-color: var(--wp--preset--color--black);
+}
+
+.entry .wp-block-column > * + * {
+  margin-block-start: 0.3em;
+}
+
+.entry h3 {
+  font-size: 1.6rem;
+  color: var(--wp--preset--color--black);
+  text-shadow: none;
+}
+
+.entry p {
+  color: var(--wp--preset--color--muted);
+}
+
+.entry .go,
+.entry .go a {
+  font-family: var(--ap-font-head);
+  font-weight: 700;
+  color: var(--wp--preset--color--orange-dark);
+  text-decoration: none;
+}
+
+.entry .go {
+  margin-block-start: 10px;
+}
+
+/* ---------- Proužek důvěry ---------------------------------------------- */
+
+.wp-block-columns.trust {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  text-align: center;
+}
+
+@media (min-width: 720px) {
+  .wp-block-columns.trust {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.trust p {
+  color: var(--wp--preset--color--muted);
+  font-size: 0.95rem;
+}
+
+.trust p strong {
+  display: block;
+  font-family: var(--ap-font-head);
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--wp--preset--color--orange-dark);
+  margin-bottom: 4px;
+}
+
+.trust.has-text-align-left {
+  text-align: left;
+}
+
+/* ---------- Karty ------------------------------------------------------------ */
+
+.card {
+  background: #fff;
+  border: 1px solid var(--wp--preset--color--line);
+  border-radius: var(--ap-radius);
+  padding: 22px 22px 20px;
+}
+
+.card ul {
+  padding-left: 1.1em;
+  color: var(--wp--preset--color--ink-soft);
+}
+
+.card ul li {
+  margin-top: 0.25em;
+}
+
+/* dvousloupcový obsah s fotkou */
+.split {
+  gap: 32px;
+}
+
+.split .wp-block-column img {
+  border-radius: var(--ap-radius);
+  box-shadow: var(--ap-shadow);
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* seznam s fajfkami */
+ul.checks {
+  list-style: none;
+  padding: 0;
+}
+
+ul.checks li {
+  position: relative;
+  padding-left: 32px;
+  margin-top: 0;
+  margin-bottom: 0.55em;
+}
+
+ul.checks li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--wp--preset--color--orange);
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><circle cx='10' cy='10' r='10' fill='black'/><path d='M5.5 10.5l3 3 6-6' stroke='white' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><circle cx='10' cy='10' r='10' fill='black'/><path d='M5.5 10.5l3 3 6-6' stroke='white' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / contain no-repeat;
+}
+
+/* ---------- Kroky (Pomoc v nouzi) ---------------------------------------- */
+
+.step {
+  background: #fff;
+  border-radius: var(--ap-radius);
+  padding: 22px 22px 20px;
+  border: 1px solid var(--wp--preset--color--line);
+}
+
+.step .step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--wp--preset--color--orange);
+  color: var(--wp--preset--color--black);
+  font-family: var(--ap-font-head);
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.step h3 {
+  font-size: 1.35rem;
+}
+
+.step p:not(.step-number) {
+  color: var(--wp--preset--color--ink-soft);
+}
+
+/* ---------- Recenze ------------------------------------------------------ */
+
+.review {
+  background: #fff;
+  border-radius: var(--ap-radius);
+  padding: 24px;
+  border: 1px solid var(--wp--preset--color--line);
+  display: flex;
+  flex-direction: column;
+}
+
+.review > .wp-block-quote {
+  flex: 1;
+}
+
+.stars {
+  color: var(--wp--preset--color--orange);
+  letter-spacing: 2px;
+  font-size: 1.1rem;
+}
+
+.review .wp-block-quote p {
+  font-size: 1.05rem;
+  color: var(--wp--preset--color--ink-soft);
+}
+
+.review .wp-block-quote cite {
+  display: block;
+  margin-top: 10px;
+  font-style: normal;
+  font-size: 0.95rem;
+  color: var(--wp--preset--color--muted);
+}
+
+.review .wp-block-quote cite strong {
+  color: var(--wp--preset--color--black);
+}
+
+.review .reply {
+  border-left: 3px solid var(--wp--preset--color--orange);
+  padding: 8px 12px;
+  background: var(--wp--preset--color--sand);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--wp--preset--color--ink-soft);
+}
+
+.rating-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.rating-badges a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid var(--wp--preset--color--line);
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: var(--wp--preset--color--black);
+}
+
+.rating-badges a strong {
+  font-family: var(--ap-font-head);
+  font-size: 1.4rem;
+  color: var(--wp--preset--color--orange-dark);
+}
+
+/* ---------- Pásmo pro hosty (DE/EN) ------------------------------------- */
+
+.guests .wp-block-column {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: var(--ap-radius);
+  padding: 22px 22px 20px;
+  color: var(--wp--preset--color--black);
+}
+
+.guests h3 {
+  font-size: 1.7rem;
+}
+
+/* ---------- Kontakt ------------------------------------------------------ */
+
+.contact {
+  gap: 32px;
+}
+
+.wp-block-table.kontakt table,
+.wp-block-table.hours table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.wp-block-table.kontakt td {
+  border: 0;
+  padding: 4px 0;
+  vertical-align: top;
+}
+
+.wp-block-table.kontakt td:first-child {
+  width: 1%;
+  white-space: nowrap;
+  padding-right: 18px;
+  padding-top: 7px;
+  font-family: var(--ap-font-head);
+  font-weight: 700;
+  color: var(--wp--preset--color--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.9rem;
+}
+
+.wp-block-table.kontakt td a {
+  font-weight: 600;
+}
+
+.wp-block-table.hours td {
+  border: 0;
+  border-bottom: 1px solid var(--wp--preset--color--line);
+  padding: 6px 0;
+}
+
+.wp-block-table.hours td:last-child {
+  text-align: right;
+  font-weight: 600;
+}
+
+.has-black-background-color .wp-block-table.hours td {
+  border-bottom-color: #3a3a3a;
+}
+
+.map {
+  width: 100%;
+  min-height: 360px;
+  border: 0;
+  border-radius: var(--ap-radius);
+  box-shadow: var(--ap-shadow);
+}
+
+/* ---------- Ceník ---------------------------------------------------------- */
+
+.wp-block-table.cenik table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.wp-block-table.cenik :is(td, th) {
+  border: 0;
+  border-bottom: 1px solid var(--wp--preset--color--line);
+  padding: 8px 0;
+  text-align: left;
+}
+
+.wp-block-table.cenik th {
+  font-family: var(--ap-font-head);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.9rem;
+  color: var(--wp--preset--color--muted);
+}
+
+.wp-block-table.cenik :is(td, th):last-child {
+  text-align: right;
+  white-space: nowrap;
+  font-weight: 600;
+  padding-left: 16px;
+}
+
+/* ---------- FAQ -------------------------------------------------------- */
+
+.wp-block-details.faq {
+  border-bottom: 1px solid var(--wp--preset--color--line);
+  padding: 14px 0;
+  margin: 0;
+}
+
+.wp-block-details.faq summary {
+  cursor: pointer;
+  font-family: var(--ap-font-head);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--wp--preset--color--black);
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.wp-block-details.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.wp-block-details.faq summary::after {
+  content: "+";
+  color: var(--wp--preset--color--orange-dark);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.wp-block-details.faq[open] summary::after {
+  content: "–";
+}
+
+.wp-block-details.faq > :not(summary) {
+  margin-block-start: 10px;
+  color: var(--wp--preset--color--ink-soft);
+}
+
+/* ---------- Značky / loga partnerů ------------------------------------- */
+
+ul.brands {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+ul.brands li {
+  margin: 0;
+  background: #fff;
+  border: 1px solid var(--wp--preset--color--line);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--ap-font-head);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--wp--preset--color--ink-soft);
+}
+
+.has-black-background-color ul.brands li {
+  background: #2a2a2a;
+  border-color: #3a3a3a;
+  color: var(--ap-dark-text);
+}
+
+/* ---------- CTA pásmo ---------------------------------------------------- */
+
+.cta-band h2 {
+  max-width: 20ch;
+  margin-inline: auto;
+}
+
+.cta-band .lead {
+  max-width: 56ch;
+  margin-inline: auto;
+}
+
+/* ---------- Výstraha / callout ----------------------------------------- */
+
+.callout {
+  border-left: 5px solid var(--wp--preset--color--orange);
+  background: var(--wp--preset--color--sand);
+  padding: 16px 20px;
+  border-radius: 0 var(--ap-radius) var(--ap-radius) 0;
+}
+
+/* ---------- Galerie ------------------------------------------------------ */
+
+.wp-block-gallery.galerie img {
+  border-radius: 10px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* ---------- Patička ---------------------------------------------------- */
+
+.site-footer {
+  color: #cfcbc2;
+  font-size: 0.95rem;
+}
+
+.site-footer h4 {
+  font-size: 1.15rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.site-footer a:not(.wp-block-button__link) {
+  color: #e9e6df;
+  text-decoration: none;
+}
+
+.site-footer a:not(.wp-block-button__link):hover {
+  color: var(--wp--preset--color--orange-light);
+}
+
+.site-footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.site-footer li {
+  margin-top: 6px;
+}
+
+.site-footer .brand {
+  margin-bottom: 12px;
+}
+
+.site-footer .brand img {
+  height: 54px !important;
+  width: auto !important;
+}
+
+.site-footer__cols {
+  gap: 28px;
+}
+
+.site-footer__legal {
+  margin-block-start: 32px;
+  padding-top: 18px;
+  border-top: 1px solid #2c2c2c;
+  color: #8d8a83;
+  font-size: 0.85rem;
+  gap: 8px 24px;
+}
+
+.site-footer__legal a:not(.wp-block-button__link) {
+  color: #cfcbc2;
+}
+
+/* ---------- Mobilní lišta Zavolat + WhatsApp -------------------------------- */
+
+.call-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(30, 30, 30, 0.96);
+  backdrop-filter: blur(8px);
+}
+
+.call-bar .wp-block-buttons {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.call-bar .wp-block-button {
+  width: auto;
+}
+
+.call-bar .wp-block-button__link {
+  width: 100%;
+  font-size: 1.1rem;
+  padding: 12px 18px;
+}
+
+/* jen ikona, text zůstává pro čtečky */
+.call-bar .btn-icon-only .wp-block-button__link {
+  font-size: 0;
+  gap: 0;
+  padding: 12px 16px;
+}
+
+.call-bar .btn-icon-only .wp-block-button__link::before {
+  width: 24px;
+  height: 24px;
+}
+
+@media (min-width: 900px) {
+  .call-bar {
+    display: none;
+  }
+}
+
+/* ---------- Karta pro recepce (náhled na obrazovce) ----------------------- */
+
+.print-card {
+  width: 148mm;
+  max-width: 100%;
+  margin-inline: auto !important;
+  background: #fff;
+  color: var(--wp--preset--color--black);
+  border: 1px solid var(--wp--preset--color--line);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--ap-shadow);
+}
+
+.print-card__top {
+  padding: 8mm 8mm 6mm;
+}
+
+.print-card__top img {
+  height: 16mm;
+  width: auto;
+}
+
+.print-card__body {
+  padding: 6mm 8mm 7mm;
+  gap: 6mm;
+}
+
+.print-card__body .wp-block-column > * + * {
+  margin-block-start: 1.5mm;
+}
+
+.print-card h2 {
+  font-size: 22pt;
+  line-height: 1.05;
+  margin-bottom: 3mm;
+}
+
+.print-card .line {
+  font-size: 11pt;
+}
+
+.print-card .line strong {
+  font-family: var(--ap-font-head);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--wp--preset--color--orange-dark);
+  margin-right: 4px;
+}
+
+.print-card .tel,
+.print-card .tel a {
+  font-family: var(--ap-font-head);
+  font-size: 26pt;
+  font-weight: 700;
+  color: var(--wp--preset--color--black);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.print-card .tel {
+  margin-block: 3mm 2mm;
+}
+
+.print-card .addr {
+  font-size: 9.5pt;
+  color: var(--wp--preset--color--muted);
+}
+
+.print-card .qrs {
+  text-align: center;
+  font-size: 8pt;
+  color: var(--wp--preset--color--muted);
+}
+
+.print-card .qrs img {
+  width: 30mm;
+  height: 30mm;
+  margin: 0 auto 1mm;
+}
+
+.print-card .qrs figcaption {
+  font-size: 8pt;
+  margin-top: 0;
+  color: var(--wp--preset--color--muted);
+}
+
+/* šablona karty je bez hlavičky a mobilní lišty, odsazení pro lištu není třeba */
+.wp-site-blocks:has(.print-page) {
+  padding-bottom: 0;
+}
+
+/* ---------- Drobnosti ------------------------------------------------------ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Tisk ------------------------------------------------------------ */
+
+@media print {
+  .site-header,
+  .site-footer,
+  .call-bar,
+  .no-print {
+    display: none !important;
+  }
+
+  .wp-site-blocks {
+    padding: 0;
+  }
+}

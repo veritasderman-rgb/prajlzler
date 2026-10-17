@@ -1,0 +1,23 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "autopraizler/language-switcher",
+	"version": "0.1.0",
+	"title": "Přepínač jazyků CZ / DE / EN",
+	"category": "design",
+	"icon": "translation",
+	"description": "Odkazy na překlad aktuální stránky podle pole Překlady stránky. Když překlad není, vede na úvod daného jazyka (/, /de/, /en/).",
+	"keywords": [ "jazyk", "language", "hreflang" ],
+	"textdomain": "autopraizler",
+	"attributes": {},
+	"supports": {
+		"html": false,
+		"reusable": false,
+		"multiple": true,
+		"spacing": {
+			"margin": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

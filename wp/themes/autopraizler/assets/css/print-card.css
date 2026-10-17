@@ -1,0 +1,37 @@
+/* Tisk karty pro recepce: A5 na šířku. Načítá se jen na šabloně
+   page-karta-pro-recepce (media="print"), aby @page neovlivnilo ostatní stránky. */
+
+@page {
+  size: A5 landscape;
+  margin: 8mm;
+}
+
+body {
+  background: #fff;
+  padding: 0;
+}
+
+.wp-site-blocks,
+.site-main {
+  padding: 0;
+}
+
+.no-print {
+  display: none !important;
+}
+
+.card-wrap {
+  padding: 0 !important;
+}
+
+.print-card {
+  box-shadow: none;
+  border: 0;
+  width: 100%;
+  max-width: none;
+}
+
+.print-card__top {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
