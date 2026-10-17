@@ -1,0 +1,281 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"settings": {
+		"appearanceTools": true,
+		"useRootPaddingAwareAlignments": true,
+		"layout": {
+			"contentSize": "1180px",
+			"wideSize": "1180px"
+		},
+		"color": {
+			"custom": false,
+			"customDuotone": false,
+			"customGradient": false,
+			"defaultDuotone": false,
+			"defaultGradients": false,
+			"defaultPalette": false,
+			"duotone": [],
+			"palette": [
+				{ "slug": "orange", "color": "#f28c1e", "name": "Oranžová" },
+				{ "slug": "orange-light", "color": "#fbb040", "name": "Oranžová světlá" },
+				{ "slug": "orange-dark", "color": "#d9641a", "name": "Oranžová tmavá" },
+				{ "slug": "black", "color": "#1e1e1e", "name": "Černá" },
+				{ "slug": "ink-soft", "color": "#2e2e2e", "name": "Černá měkká" },
+				{ "slug": "text", "color": "#262626", "name": "Text" },
+				{ "slug": "muted", "color": "#6a6a6a", "name": "Šedá (tlumený text)" },
+				{ "slug": "line", "color": "#e4e2dd", "name": "Linka" },
+				{ "slug": "sand", "color": "#f6f4ef", "name": "Písková" },
+				{ "slug": "paper", "color": "#ffffff", "name": "Bílá" },
+				{ "slug": "footer", "color": "#141414", "name": "Patička" },
+				{ "slug": "whatsapp", "color": "#25d366", "name": "WhatsApp" }
+			],
+			"gradients": [
+				{
+					"slug": "orange",
+					"gradient": "linear-gradient(160deg, #fbb040 0%, #f28c1e 55%, #d9641a 100%)",
+					"name": "Oranžový přechod"
+				}
+			]
+		},
+		"shadow": {
+			"defaultPresets": false,
+			"presets": [
+				{ "slug": "card", "shadow": "0 10px 30px rgba(0, 0, 0, 0.12)", "name": "Karta" }
+			]
+		},
+		"spacing": {
+			"defaultSpacingSizes": false,
+			"spacingSizes": [
+				{ "slug": "20", "size": "8px", "name": "Drobná" },
+				{ "slug": "30", "size": "12px", "name": "Malá" },
+				{ "slug": "40", "size": "20px", "name": "Střední" },
+				{ "slug": "50", "size": "32px", "name": "Velká" },
+				{ "slug": "60", "size": "clamp(28px, 4vw, 48px)", "name": "Sekce úzká" },
+				{ "slug": "70", "size": "clamp(48px, 8vw, 96px)", "name": "Sekce" }
+			],
+			"units": [ "px", "rem", "em", "%", "vw" ]
+		},
+		"typography": {
+			"defaultFontSizes": false,
+			"fluid": true,
+			"dropCap": false,
+			"fontSizes": [
+				{ "slug": "small", "size": "0.95rem", "name": "Malé", "fluid": false },
+				{ "slug": "medium", "size": "1.0625rem", "name": "Základní", "fluid": false },
+				{ "slug": "lead", "size": "1.2rem", "name": "Perex", "fluid": { "min": "1.1rem", "max": "1.2rem" } },
+				{ "slug": "large", "size": "1.45rem", "name": "Nadpis 3", "fluid": false },
+				{ "slug": "x-large", "size": "2.8rem", "name": "Nadpis 2", "fluid": { "min": "1.9rem", "max": "2.8rem" } },
+				{ "slug": "xx-large", "size": "4.2rem", "name": "Nadpis 1", "fluid": { "min": "2.3rem", "max": "4.2rem" } }
+			],
+			"fontFamilies": [
+				{
+					"fontFamily": "\"Barlow\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+					"name": "Barlow",
+					"slug": "barlow",
+					"fontFace": [
+						{ "fontFamily": "Barlow", "fontWeight": "400", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF", "src": [ "file:./assets/fonts/barlow-400-latin-ext.woff2" ] },
+						{ "fontFamily": "Barlow", "fontWeight": "400", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD", "src": [ "file:./assets/fonts/barlow-400-latin.woff2" ] },
+						{ "fontFamily": "Barlow", "fontWeight": "500", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF", "src": [ "file:./assets/fonts/barlow-500-latin-ext.woff2" ] },
+						{ "fontFamily": "Barlow", "fontWeight": "500", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD", "src": [ "file:./assets/fonts/barlow-500-latin.woff2" ] },
+						{ "fontFamily": "Barlow", "fontWeight": "600", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF", "src": [ "file:./assets/fonts/barlow-600-latin-ext.woff2" ] },
+						{ "fontFamily": "Barlow", "fontWeight": "600", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD", "src": [ "file:./assets/fonts/barlow-600-latin.woff2" ] },
+						{ "fontFamily": "Barlow", "fontWeight": "700", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF", "src": [ "file:./assets/fonts/barlow-700-latin-ext.woff2" ] },
+						{ "fontFamily": "Barlow", "fontWeight": "700", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD", "src": [ "file:./assets/fonts/barlow-700-latin.woff2" ] }
+					]
+				},
+				{
+					"fontFamily": "\"Barlow Condensed\", \"Arial Narrow\", Impact, \"Helvetica Neue\", Arial, sans-serif",
+					"name": "Barlow Condensed",
+					"slug": "barlow-condensed",
+					"fontFace": [
+						{ "fontFamily": "Barlow Condensed", "fontWeight": "600", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF", "src": [ "file:./assets/fonts/barlow-condensed-600-latin-ext.woff2" ] },
+						{ "fontFamily": "Barlow Condensed", "fontWeight": "600", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD", "src": [ "file:./assets/fonts/barlow-condensed-600-latin.woff2" ] },
+						{ "fontFamily": "Barlow Condensed", "fontWeight": "700", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF", "src": [ "file:./assets/fonts/barlow-condensed-700-latin-ext.woff2" ] },
+						{ "fontFamily": "Barlow Condensed", "fontWeight": "700", "fontStyle": "normal", "fontDisplay": "swap", "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD", "src": [ "file:./assets/fonts/barlow-condensed-700-latin.woff2" ] }
+					]
+				}
+			]
+		}
+	},
+	"styles": {
+		"color": {
+			"background": "var:preset|color|paper",
+			"text": "var:preset|color|text"
+		},
+		"typography": {
+			"fontFamily": "var:preset|font-family|barlow",
+			"fontSize": "var:preset|font-size|medium",
+			"fontWeight": "400",
+			"letterSpacing": "normal",
+			"lineHeight": "1.55"
+		},
+		"spacing": {
+			"blockGap": "1rem",
+			"padding": {
+				"top": "0",
+				"right": "16px",
+				"bottom": "0",
+				"left": "16px"
+			}
+		},
+		"elements": {
+			"heading": {
+				"color": { "text": "var:preset|color|black" },
+				"typography": {
+					"fontFamily": "var:preset|font-family|barlow-condensed",
+					"fontWeight": "700",
+					"lineHeight": "1.08",
+					"letterSpacing": "normal"
+				}
+			},
+			"h1": { "typography": { "fontSize": "var:preset|font-size|xx-large", "letterSpacing": "-0.01em" } },
+			"h2": { "typography": { "fontSize": "var:preset|font-size|x-large" } },
+			"h3": { "typography": { "fontSize": "var:preset|font-size|large" } },
+			"h4": { "typography": { "fontSize": "1.15rem" } },
+			"h5": { "typography": { "fontSize": "1rem", "letterSpacing": "normal" } },
+			"h6": { "typography": { "fontSize": "0.95rem", "letterSpacing": "0.08em", "textTransform": "uppercase" } },
+			"link": {
+				"color": { "text": "var:preset|color|orange-dark" },
+				":hover": { "color": { "text": "var:preset|color|black" } }
+			},
+			"caption": {
+				"color": { "text": "var:preset|color|muted" },
+				"typography": { "fontSize": "var:preset|font-size|small", "lineHeight": "1.4" }
+			},
+			"button": {
+				"color": {
+					"background": "var:preset|color|orange",
+					"text": "var:preset|color|black"
+				},
+				"border": {
+					"radius": "999px",
+					"width": "2px",
+					"style": "solid",
+					"color": "var:preset|color|orange"
+				},
+				"typography": {
+					"fontFamily": "var:preset|font-family|barlow-condensed",
+					"fontSize": "1.15rem",
+					"fontWeight": "700",
+					"letterSpacing": "0.02em",
+					"textDecoration": "none"
+				},
+				"spacing": {
+					"padding": { "top": "12px", "right": "22px", "bottom": "12px", "left": "22px" }
+				},
+				":hover": {
+					"color": {
+						"background": "var:preset|color|orange-light",
+						"text": "var:preset|color|black"
+					},
+					"border": { "color": "var:preset|color|orange-light" }
+				},
+				":focus": {
+					"outline": { "color": "var:preset|color|orange-dark", "offset": "2px", "style": "solid", "width": "2px" }
+				}
+			}
+		},
+		"blocks": {
+			"core/button": {
+				"variations": {
+					"outline": {
+						"color": { "background": "transparent", "text": "var:preset|color|black" },
+						"border": { "color": "var:preset|color|black", "width": "2px", "style": "solid" },
+						"spacing": {
+							"padding": { "top": "12px", "right": "22px", "bottom": "12px", "left": "22px" }
+						},
+						"css": "& > .wp-block-button__link:hover { background-color: var(--wp--preset--color--black); color: #fff; border-color: var(--wp--preset--color--black); }"
+					}
+				}
+			},
+			"core/buttons": {
+				"spacing": { "blockGap": "12px" }
+			},
+			"core/columns": {
+				"spacing": { "blockGap": "20px" }
+			},
+			"core/list": {
+				"css": "& li { margin-top: 0.25rem; }"
+			},
+			"core/quote": {
+				"border": { "width": "0", "style": "none", "color": "transparent" },
+				"spacing": {
+					"blockGap": "10px",
+					"margin": { "top": "0", "right": "0", "bottom": "0", "left": "0" },
+					"padding": { "top": "0", "right": "0", "bottom": "0", "left": "0" }
+				},
+				"typography": { "fontSize": "1.05rem", "fontWeight": "400", "fontStyle": "normal" },
+				"elements": {
+					"cite": {
+						"color": { "text": "var:preset|color|muted" },
+						"typography": { "fontSize": "var:preset|font-size|small", "fontStyle": "normal", "fontWeight": "400" }
+					}
+				},
+				"css": ""
+			},
+			"core/pullquote": {
+				"typography": { "fontFamily": "var:preset|font-family|barlow-condensed", "fontSize": "var:preset|font-size|large", "fontWeight": "600", "lineHeight": "1.2" }
+			},
+			"core/navigation": {
+				"typography": {
+					"fontFamily": "var:preset|font-family|barlow-condensed",
+					"fontSize": "1.1rem",
+					"fontWeight": "600",
+					"letterSpacing": "0.02em"
+				},
+				"elements": {
+					"link": {
+						"color": { "text": "var:preset|color|black" },
+						"typography": { "textDecoration": "none" },
+						":hover": { "color": { "text": "var:preset|color|orange-dark" }, "typography": { "textDecoration": "none" } }
+					}
+				}
+			},
+			"core/separator": {
+				"border": { "color": "var:preset|color|line", "style": "solid", "width": "0 0 1px 0" },
+				"color": { "text": "var:preset|color|line" }
+			},
+			"core/table": {
+				"typography": { "fontSize": "var:preset|font-size|medium" }
+			},
+			"core/details": {
+				"typography": { "fontSize": "var:preset|font-size|medium" }
+			},
+			"core/post-title": {
+				"typography": { "fontSize": "var:preset|font-size|xx-large" }
+			},
+			"core/site-title": {
+				"typography": { "fontFamily": "var:preset|font-family|barlow-condensed", "fontWeight": "700", "fontSize": "var:preset|font-size|large" }
+			}
+		}
+	},
+	"customTemplates": [
+		{
+			"name": "page-de",
+			"title": "Stránka DE (německá hlavička a patička)",
+			"postTypes": [ "page" ]
+		},
+		{
+			"name": "page-en",
+			"title": "Stránka EN (anglická hlavička a patička)",
+			"postTypes": [ "page" ]
+		},
+		{
+			"name": "page-karta-pro-recepce",
+			"title": "Karta pro recepce (tisk, bez hlavičky a patičky)",
+			"postTypes": [ "page" ]
+		}
+	],
+	"templateParts": [
+		{ "name": "header", "title": "Hlavička CZ", "area": "header" },
+		{ "name": "header-de", "title": "Hlavička DE", "area": "header" },
+		{ "name": "header-en", "title": "Hlavička EN", "area": "header" },
+		{ "name": "footer", "title": "Patička CZ", "area": "footer" },
+		{ "name": "footer-de", "title": "Patička DE", "area": "footer" },
+		{ "name": "footer-en", "title": "Patička EN", "area": "footer" },
+		{ "name": "mobile-bar", "title": "Mobilní lišta Zavolat CZ", "area": "uncategorized" },
+		{ "name": "mobile-bar-de", "title": "Mobilní lišta Zavolat DE", "area": "uncategorized" },
+		{ "name": "mobile-bar-en", "title": "Mobilní lišta Zavolat EN", "area": "uncategorized" }
+	]
+}
