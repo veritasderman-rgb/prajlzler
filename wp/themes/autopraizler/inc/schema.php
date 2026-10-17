@@ -4,7 +4,9 @@
  *
  * Jediný zdroj strukturovaných dat na webu. Modul schema v SEO pluginu
  * (Rank Math / Yoast) musí zůstat vypnutý, aby na stránce nebyly dva zdroje
- * s různými údaji (docs/navrh-sablony.md, část 4).
+ * s různými údaji (docs/navrh-sablony.md, část 4). Údaje bere z
+ * ap_business_data() (inc/business.php), otevírací doba tam je označená
+ * jako nepotvrzená (otázka č. 1).
  *
  * @package AutoPraizler
  */
@@ -14,62 +16,48 @@ declare( strict_types=1 );
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Data pro JSON-LD. Přeneseno z <script type="application/ld+json"> ve
- * statickém návrhu (index.html).
- *
- * POZOR: otevírací doba není potvrzená majitelem (otevřená otázka č. 1
- * v docs/obsahova-mapa.md: Po–Čt 8–17, Pá 8–15 podle Googlu; starý web uvádí
- * Po–Pá 8–17 s pauzou 12–13). Po potvrzení upravit tady i ve vzorech
- * "Otevírací doba" a v patičkách.
- *
  * @return array<string, mixed>
  */
 function ap_schema_data(): array {
+	$b    = ap_business_data();
 	$logo = get_theme_file_uri( 'assets/img/autopraizler-logo.svg' );
+
+	$hours = array();
+	foreach ( $b['opening_hours'] as $item ) {
+		$hours[] = array(
+			'@type'     => 'OpeningHoursSpecification',
+			'dayOfWeek' => count( $item['days'] ) === 1 ? $item['days'][0] : $item['days'],
+			'opens'     => $item['opens'],
+			'closes'    => $item['closes'],
+		);
+	}
 
 	return array(
 		'@context'                  => 'https://schema.org',
 		'@type'                     => 'AutoRepair',
-		'name'                      => 'AutoPraizler M.L.',
+		'name'                      => $b['name'],
 		// Fotka budovy až po potvrzení původu (otázka č. 10), zatím logo.
 		'image'                     => $logo,
 		'logo'                      => $logo,
 		'url'                       => home_url( '/' ),
-		'telephone'                 => '+420728920290',
-		'email'                     => 'servis@autopraizler.cz',
+		'telephone'                 => $b['phone_e164'],
+		'email'                     => $b['email'],
 		'priceRange'                => '$$',
-		'foundingDate'              => '2011-03-09',
+		'foundingDate'              => $b['founding_date'],
 		'address'                   => array(
 			'@type'           => 'PostalAddress',
-			'streetAddress'   => 'U Mlékárny 844/8a',
-			'addressLocality' => 'Mariánské Lázně',
-			'postalCode'      => '353 01',
+			'streetAddress'   => $b['street'],
+			'addressLocality' => $b['city'],
+			'postalCode'      => $b['postal_code'],
 			'addressCountry'  => 'CZ',
 		),
 		'geo'                       => array(
 			'@type'     => 'GeoCoordinates',
-			'latitude'  => 49.9562,
-			'longitude' => 12.69333,
+			'latitude'  => $b['lat'],
+			'longitude' => $b['lng'],
 		),
-		// Neověřeno, viz komentář výše.
-		'openingHoursSpecification' => array(
-			array(
-				'@type'     => 'OpeningHoursSpecification',
-				'dayOfWeek' => array( 'Monday', 'Tuesday', 'Wednesday', 'Thursday' ),
-				'opens'     => '08:00',
-				'closes'    => '17:00',
-			),
-			array(
-				'@type'     => 'OpeningHoursSpecification',
-				'dayOfWeek' => 'Friday',
-				'opens'     => '08:00',
-				'closes'    => '15:00',
-			),
-		),
-		'sameAs'                    => array(
-			'https://www.facebook.com/people/AutoPraizler-ML/100064057664199/',
-			'https://www.firmy.cz/detail/2642756-autopraizler-marianske-lazne-usovice.html',
-		),
+		'openingHoursSpecification' => $hours,
+		'sameAs'                    => array( $b['facebook_url'], $b['firmy_url'] ),
 		'areaServed'                => array( 'Mariánské Lázně', 'Cheb', 'Karlovarský kraj' ),
 		'knowsLanguage'             => array( 'cs', 'de', 'en' ),
 	);
@@ -82,11 +70,11 @@ function ap_output_schema(): void {
 	if ( ! is_front_page() || is_paged() || 'cs' !== ap_current_language() ) {
 		return;
 	}
-	$json = wp_json_encode( ap_schema_data(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+	// JSON_HEX_TAG a JSON_HEX_AMP: "<", ">" a "&" se zapíší jako < apod., obsah nemůže ukončit <script>.
+	$json = wp_json_encode( ap_schema_data(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP );
 	if ( ! is_string( $json ) ) {
 		return;
 	}
-	// JSON neobsahuje uživatelský vstup; "<" se escapuje kvůli ukončení <script>.
-	echo '<script type="application/ld+json">' . str_replace( '<', '<', $json ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '<script type="application/ld+json">' . $json . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON bez < > & viz výše.
 }
 add_action( 'wp_head', 'ap_output_schema', 5 );

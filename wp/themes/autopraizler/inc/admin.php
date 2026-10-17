@@ -25,6 +25,26 @@ function ap_add_translations_meta_box(): void {
 }
 add_action( 'add_meta_boxes_page', 'ap_add_translations_meta_box' );
 
+/**
+ * Stránky daného jazyka (podle rodiče de/en nebo šablony), bez $exclude.
+ *
+ * @return WP_Post[]
+ */
+function ap_pages_for_language( string $lang, int $exclude ): array {
+	$pages = get_pages(
+		array(
+			'post_status' => array( 'publish', 'draft', 'pending', 'private' ),
+			'sort_column' => 'menu_order,post_title',
+		)
+	);
+	return array_values(
+		array_filter(
+			$pages,
+			static fn ( WP_Post $page ): bool => (int) $page->ID !== $exclude && ap_page_language( (int) $page->ID ) === $lang
+		)
+	);
+}
+
 function ap_render_translations_meta_box( WP_Post $post ): void {
 	$labels = array(
 		'cs' => __( 'Česky (CZ)', 'autopraizler' ),
@@ -35,7 +55,7 @@ function ap_render_translations_meta_box( WP_Post $post ): void {
 
 	wp_nonce_field( 'ap_translations_' . $post->ID, 'ap_translations_nonce' );
 
-	echo '<p class="description">' . esc_html__( 'Vyberte stejnou stránku v ostatních jazycích. Stačí vyplnit na jedné straně, druhý směr se dohledá sám. Z tohoto nastavení se tvoří přepínač jazyků a hreflang.', 'autopraizler' ) . '</p>';
+	echo '<p class="description">' . esc_html__( 'Vyberte stejnou stránku v ostatních jazycích. Stačí vyplnit na jedné straně, ostatní směry se dohledají samy. Nabízejí se jen stránky daného jazyka (pod rodičem de / en, resp. mimo ně). Z tohoto nastavení se tvoří přepínač jazyků a hreflang.', 'autopraizler' ) . '</p>';
 
 	foreach ( AP_LANGUAGES as $lang ) {
 		if ( $lang === $own ) {
@@ -43,20 +63,22 @@ function ap_render_translations_meta_box( WP_Post $post ): void {
 		}
 		$field = 'ap_translation_' . $lang;
 		$value = (int) get_post_meta( $post->ID, $field, true );
+		$pages = ap_pages_for_language( $lang, (int) $post->ID );
 
 		echo '<p><label for="' . esc_attr( $field ) . '"><strong>' . esc_html( $labels[ $lang ] ) . '</strong></label><br>';
-		wp_dropdown_pages(
-			array(
-				'name'              => $field,
-				'id'                => $field,
-				'selected'          => $value,
-				'exclude'           => $post->ID,
-				'show_option_none'  => __( '— bez překladu —', 'autopraizler' ),
-				'option_none_value' => 0,
-				'post_status'       => array( 'publish', 'draft', 'pending', 'private' ),
-			)
-		);
-		echo '</p>';
+		echo '<select name="' . esc_attr( $field ) . '" id="' . esc_attr( $field ) . '" style="width:100%">';
+		echo '<option value="0">' . esc_html__( '— bez překladu —', 'autopraizler' ) . '</option>';
+		foreach ( $pages as $page ) {
+			$depth = count( get_post_ancestors( $page ) );
+			printf(
+				'<option value="%d"%s>%s%s</option>',
+				(int) $page->ID,
+				selected( $value, (int) $page->ID, false ),
+				esc_html( str_repeat( '— ', $depth ) ),
+				esc_html( get_the_title( $page ) . ( 'publish' !== $page->post_status ? ' (' . $page->post_status . ')' : '' ) )
+			);
+		}
+		echo '</select></p>';
 	}
 }
 
@@ -73,20 +95,47 @@ function ap_save_translations_meta_box( int $post_id, WP_Post $post ): void {
 		return;
 	}
 
+	$rejected = array();
 	foreach ( AP_LANGUAGES as $lang ) {
 		$field = 'ap_translation_' . $lang;
 		if ( ! isset( $_POST[ $field ] ) ) {
 			continue;
 		}
 		$value = absint( wp_unslash( $_POST[ $field ] ) );
-		if ( $value > 0 && $value !== $post_id ) {
+		if ( $value > 0 && $value !== $post_id && ap_page_language( $value ) === $lang ) {
 			update_post_meta( $post_id, $field, $value );
-		} else {
-			delete_post_meta( $post_id, $field );
+			continue;
 		}
+		if ( $value > 0 ) {
+			$rejected[] = sprintf( '%s → %s', strtoupper( $lang ), get_the_title( $value ) );
+		}
+		delete_post_meta( $post_id, $field );
+	}
+
+	if ( $rejected ) {
+		set_transient(
+			'ap_translation_notice_' . get_current_user_id(),
+			sprintf(
+				/* translators: %s: seznam odmítnutých voleb */
+				__( 'Překlad nebyl uložen, vybraná stránka není v daném jazyce (musí být pod rodičem de / en, česká mimo ně): %s', 'autopraizler' ),
+				implode( ', ', $rejected )
+			),
+			120
+		);
 	}
 }
 add_action( 'save_post_page', 'ap_save_translations_meta_box', 10, 2 );
+
+function ap_translation_admin_notice(): void {
+	$key    = 'ap_translation_notice_' . get_current_user_id();
+	$notice = get_transient( $key );
+	if ( ! is_string( $notice ) || '' === $notice ) {
+		return;
+	}
+	delete_transient( $key );
+	echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html( $notice ) . '</p></div>';
+}
+add_action( 'admin_notices', 'ap_translation_admin_notice' );
 
 /* -------------------------------------------------------------------------
  * Role Editor (Jarda) a Site Editor

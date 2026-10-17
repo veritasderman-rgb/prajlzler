@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
  * Verze šablony (z hlavičky style.css), používá se pro cache-busting.
  */
 function autopraizler_version(): string {
-	$version = wp_get_theme( 'autopraizler' )->get( 'Version' );
+	$version = wp_get_theme()->get( 'Version' ); // aktivní (child) šablona, ať se složka jmenuje jakkoli
 	return is_string( $version ) && '' !== $version ? $version : '0.1.0';
 }
 
@@ -139,8 +139,17 @@ function autopraizler_copyright_binding( array $source_args ): string {
 /**
  * Vzory rodičovské šablony schováme z inserteru (zůstanou registrované,
  * protože na ně odkazují šablony Twenty Twenty-Five pro archivy a příspěvky).
+ *
+ * get_all_registered() načítá obsah všech souborů vzorů, proto se to dělá
+ * jen tam, kde se inserter plní: v administraci a v REST API (blokový editor
+ * si vzory stahuje přes /wp/v2/block-patterns). Na front endu a v cronu ne.
  */
 function autopraizler_hide_parent_patterns(): void {
+	static $done = false;
+	if ( $done ) {
+		return;
+	}
+	$done     = true;
 	$registry = WP_Block_Patterns_Registry::get_instance();
 
 	foreach ( $registry->get_all_registered() as $pattern ) {
@@ -156,7 +165,8 @@ function autopraizler_hide_parent_patterns(): void {
 		register_block_pattern( $name, $pattern );
 	}
 }
-add_action( 'init', 'autopraizler_hide_parent_patterns', 20 );
+add_action( 'admin_init', 'autopraizler_hide_parent_patterns' );
+add_action( 'rest_api_init', 'autopraizler_hide_parent_patterns' );
 
 /**
  * Šablona "Page No Title" z Twenty Twenty-Five by Jardu jen mátla.
@@ -182,14 +192,19 @@ add_filter( 'get_block_templates', 'autopraizler_filter_block_templates', 10, 3 
 
 /**
  * Favicon ze šablony, dokud není nastavená ikona webu v Nastavení → Obecné.
+ * Jen jeden <link rel="icon">; has_site_icon() zůstává false, takže se
+ * nevypisují apple-touch-icon ani msapplication značky pro SVG.
  */
-function autopraizler_default_site_icon( string $url ): string {
-	if ( '' !== $url ) {
-		return $url;
+function autopraizler_default_favicon(): void {
+	if ( has_site_icon() ) {
+		return;
 	}
-	return get_theme_file_uri( 'assets/img/favicon.svg' );
+	printf(
+		'<link rel="icon" type="image/svg+xml" href="%s">' . "\n",
+		esc_url( get_theme_file_uri( 'assets/img/favicon.svg' ) )
+	);
 }
-add_filter( 'get_site_icon_url', 'autopraizler_default_site_icon' );
+add_action( 'wp_head', 'autopraizler_default_favicon', 99 );
 
 /**
  * Je zobrazená stránka tisková karta pro recepce?

@@ -7,9 +7,12 @@
  * Keywords: zavolat, cta, výzva, whatsapp
  * Viewport Width: 1180
  *
+ * Telefon a WhatsApp z inc/business.php (při vložení).
+ *
  * @package AutoPraizler
  */
 
+$ap_b = ap_business_data();
 ?>
 <!-- wp:group {"align":"full","className":"cta-band","backgroundColor":"sand","style":{"spacing":{"padding":{"top":"var:preset|spacing|70","bottom":"var:preset|spacing|70"}}},"layout":{"type":"constrained"}} -->
 <div class="wp-block-group alignfull cta-band has-sand-background-color has-background" style="padding-top:var(--wp--preset--spacing--70);padding-bottom:var(--wp--preset--spacing--70)">
@@ -24,11 +27,11 @@
 	<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"}} -->
 	<div class="wp-block-buttons">
 		<!-- wp:button {"className":"btn-phone"} -->
-		<div class="wp-block-button btn-phone"><a class="wp-block-button__link wp-element-button" href="tel:+420728920290">Zavolat 728 920 290</a></div>
+		<div class="wp-block-button btn-phone"><a class="wp-block-button__link wp-element-button" href="<?php echo esc_url( $ap_b['phone_url'] ); ?>">Zavolat <?php echo esc_html( $ap_b['phone_short'] ); ?></a></div>
 		<!-- /wp:button -->
 
 		<!-- wp:button {"className":"is-style-whatsapp","rel":"noopener"} -->
-		<div class="wp-block-button is-style-whatsapp"><a class="wp-block-button__link wp-element-button" href="https://wa.me/420728920290" rel="noopener">Napsat na WhatsApp</a></div>
+		<div class="wp-block-button is-style-whatsapp"><a class="wp-block-button__link wp-element-button" href="<?php echo esc_url( $ap_b['whatsapp_url'] ); ?>" rel="noopener">Napsat na WhatsApp</a></div>
 		<!-- /wp:button -->
 	</div>
 	<!-- /wp:buttons -->

@@ -12,6 +12,8 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
+require_once __DIR__ . '/inc/business.php';     // údaje o firmě (jediný zdroj: telefon, adresa, otevírací doba…)
+require_once __DIR__ . '/inc/parts.php';        // markup hlavičky, patičky, lišty a 404 pro skryté vzory
 require_once __DIR__ . '/inc/setup.php';        // styly, vzory, styly bloků, vazby bloků
 require_once __DIR__ . '/inc/locale.php';       // přepnutí locale pro /de/ a /en/
 require_once __DIR__ . '/inc/translations.php'; // propojení překladů, hreflang, blok přepínače

@@ -7,12 +7,16 @@
  * Keywords: karta, recepce, tisk, QR
  * Viewport Width: 900
  *
+ * Telefon, adresa a otevírací doba z inc/business.php.
+ *
  * @package AutoPraizler
  */
 
+$ap_b        = ap_business_data();
 $ap_logo     = esc_url( get_theme_file_uri( 'assets/img/autopraizler-logo.svg' ) );
 $ap_qr_tel   = esc_url( get_theme_file_uri( 'assets/img/qr-tel.svg' ) );
 $ap_qr_hilfe = esc_url( get_theme_file_uri( 'assets/img/qr-hilfe.svg' ) );
+$ap_addr     = $ap_b['name'] . ' · ' . $ap_b['street'] . ', ' . $ap_b['city'] . ' (u nádraží / am Bahnhof / near the railway station) · ' . ap_hours_compact( 'de' ) . ' · WhatsApp';
 ?>
 <!-- wp:group {"align":"full","className":"no-print","backgroundColor":"sand","style":{"spacing":{"padding":{"top":"var:preset|spacing|60","bottom":"var:preset|spacing|60"}}},"layout":{"type":"constrained","contentSize":"780px"}} -->
 <div class="wp-block-group alignfull no-print has-sand-background-color has-background" style="padding-top:var(--wp--preset--spacing--60);padding-bottom:var(--wp--preset--spacing--60)">
@@ -49,7 +53,7 @@ $ap_qr_hilfe = esc_url( get_theme_file_uri( 'assets/img/qr-hilfe.svg' ) );
 		<!-- wp:group {"className":"print-card__top","gradient":"orange","layout":{"type":"default"}} -->
 		<div class="wp-block-group print-card__top has-orange-gradient-background has-background">
 			<!-- wp:image {"className":"print-card__logo"} -->
-			<figure class="wp-block-image print-card__logo"><img src="<?php echo $ap_logo; ?>" alt="AutoPraizler M.L."/></figure>
+			<figure class="wp-block-image print-card__logo"><img src="<?php echo $ap_logo; ?>" alt="<?php echo esc_attr( $ap_b['name'] ); ?>"/></figure>
 			<!-- /wp:image -->
 		</div>
 		<!-- /wp:group -->
@@ -75,11 +79,11 @@ $ap_qr_hilfe = esc_url( get_theme_file_uri( 'assets/img/qr-hilfe.svg' ) );
 				<!-- /wp:paragraph -->
 
 				<!-- wp:paragraph {"className":"tel"} -->
-				<p class="tel"><a href="tel:+420728920290">+420 728 920 290</a></p>
+				<p class="tel"><a href="<?php echo esc_url( $ap_b['phone_url'] ); ?>"><?php echo esc_html( $ap_b['phone_display'] ); ?></a></p>
 				<!-- /wp:paragraph -->
 
 				<!-- wp:paragraph {"className":"addr"} -->
-				<p class="addr">AutoPraizler M.L. · U Mlékárny 844/8a, Mariánské Lázně (u nádraží / am Bahnhof / near the railway station) · Mo–Do 8–17, Fr 8–15 · WhatsApp</p>
+				<p class="addr"><?php echo esc_html( $ap_addr ); ?></p>
 				<!-- /wp:paragraph -->
 			</div>
 			<!-- /wp:column -->
@@ -87,7 +91,7 @@ $ap_qr_hilfe = esc_url( get_theme_file_uri( 'assets/img/qr-hilfe.svg' ) );
 			<!-- wp:column {"verticalAlignment":"center","width":"34mm","className":"qrs"} -->
 			<div class="wp-block-column is-vertically-aligned-center qrs" style="flex-basis:34mm">
 				<!-- wp:image -->
-				<figure class="wp-block-image"><img src="<?php echo $ap_qr_tel; ?>" alt="QR kód: zavolat +420 728 920 290"/><figcaption class="wp-element-caption">Anrufen · Call</figcaption></figure>
+				<figure class="wp-block-image"><img src="<?php echo $ap_qr_tel; ?>" alt="<?php echo esc_attr( 'QR kód: zavolat ' . $ap_b['phone_display'] ); ?>"/><figcaption class="wp-element-caption">Anrufen · Call</figcaption></figure>
 				<!-- /wp:image -->
 
 				<!-- wp:image -->

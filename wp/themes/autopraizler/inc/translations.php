@@ -91,18 +91,30 @@ function ap_get_translations( int $post_id ): array {
 		return $cache[ $post_id ];
 	}
 
-	$result         = array_fill_keys( AP_LANGUAGES, 0 );
-	$own            = ap_page_language( $post_id );
-	$result[ $own ] = $post_id;
+	$result = array_fill_keys( AP_LANGUAGES, 0 );
+	$result[ ap_page_language( $post_id ) ] = $post_id;
 
-	// 1. vlastní pole stránky + stránky, které na ni odkazují jako na svůj překlad
-	ap_collect_translations( $post_id, $result );
-
-	// 2. přes českou stránku (uzel): DE stránka tak najde EN, i když jsou
-	//    propojení vyplněná jen z české strany nebo jen z jedné cizojazyčné.
-	$cs = $result['cs'];
-	if ( $cs > 0 && $cs !== $post_id ) {
-		ap_collect_translations( $cs, $result );
+	// Uzávěr: od výchozí stránky se jde po všech polích (přímých i opačných),
+	// dokud se neobjeví nové stránky. Díky tomu se vyřeší i řetězec
+	// EN → DE → CS (EN zná jen DE, DE zná jen CS). Strop 6 kol, max. 3 stránky.
+	$seen  = array( $post_id => true );
+	$queue = array( $post_id );
+	for ( $round = 0; $round < 6 && ! empty( $queue ); $round++ ) {
+		$next = array();
+		foreach ( $queue as $id ) {
+			foreach ( ap_translation_links( $id ) as $lang => $linked_id ) {
+				if ( isset( $seen[ $linked_id ] ) ) {
+					continue;
+				}
+				$seen[ $linked_id ] = true;
+				if ( 0 !== $result[ $lang ] || 'publish' !== get_post_status( $linked_id ) ) {
+					continue;
+				}
+				$result[ $lang ] = $linked_id;
+				$next[]          = $linked_id;
+			}
+		}
+		$queue = $next;
 	}
 
 	$cache[ $post_id ] = $result;
@@ -110,21 +122,23 @@ function ap_get_translations( int $post_id ): array {
 }
 
 /**
- * Doplní do $result překlady zjištěné z polí stránky $post_id a z polí
- * stránek, které na $post_id odkazují. Už vyplněné jazyky nepřepisuje.
+ * Stránky propojené s $post_id jedním krokem: jeho vlastní pole
+ * ap_translation_* (jen když jazyk cílové stránky odpovídá poli) a stránky,
+ * které na něj odkazují polem pro jeho jazyk.
  *
- * @param array<string, int> $result Průběžný výsledek (upravuje se odkazem).
+ * @return array<string, int> jazyk => ID
  */
-function ap_collect_translations( int $post_id, array &$result ): void {
-	$own = ap_page_language( $post_id );
+function ap_translation_links( int $post_id ): array {
+	$own   = ap_page_language( $post_id );
+	$links = array();
 
 	foreach ( AP_LANGUAGES as $lang ) {
-		if ( 0 !== $result[ $lang ] ) {
+		if ( $lang === $own ) {
 			continue;
 		}
 		$id = (int) get_post_meta( $post_id, 'ap_translation_' . $lang, true );
-		if ( $id > 0 && $id !== $post_id && 'publish' === get_post_status( $id ) && ap_page_language( $id ) === $lang ) {
-			$result[ $lang ] = $id;
+		if ( $id > 0 && $id !== $post_id && ap_page_language( $id ) === $lang ) {
+			$links[ $lang ] = $id;
 		}
 	}
 
@@ -132,7 +146,7 @@ function ap_collect_translations( int $post_id, array &$result ): void {
 		array(
 			'post_type'      => 'page',
 			'post_status'    => 'publish',
-			'posts_per_page' => 5,
+			'posts_per_page' => 10,
 			'fields'         => 'ids',
 			'no_found_rows'  => true,
 			'meta_key'       => 'ap_translation_' . $own, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
@@ -142,10 +156,12 @@ function ap_collect_translations( int $post_id, array &$result ): void {
 	foreach ( $linked as $linked_id ) {
 		$linked_id = (int) $linked_id;
 		$lang      = ap_page_language( $linked_id );
-		if ( 0 === $result[ $lang ] && $linked_id !== $post_id ) {
-			$result[ $lang ] = $linked_id;
+		if ( $linked_id !== $post_id && $lang !== $own && ! isset( $links[ $lang ] ) ) {
+			$links[ $lang ] = $linked_id;
 		}
 	}
+
+	return $links;
 }
 
 /**
