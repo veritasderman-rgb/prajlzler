@@ -103,12 +103,20 @@ globalThis.fetch = async (url, opts = {}) => {
 const resendCalls = () => calls.filter((c) => c.url.startsWith('https://api.resend.com/'));
 const ghCalls = (method, pathPart) => calls.filter((c) => c.url.startsWith('https://api.github.com/') && c.method === method && (!pathPart || ghPath(c.url).includes(pathPart)));
 
+const MASTER = 'obsah/aktuality/novinky.json'; // hlavní soubor včetně návrhů (mimo web/)
+const PUBLIC = 'web/data/novinky.json'; // jen zveřejněné položky
+function seedFile(path, items) {
+  github.files.set(path, { sha: newSha(), content: Buffer.from(JSON.stringify({ items }, null, 2) + '\n') });
+}
 function seedNews(items) {
-  github.files.set('web/data/novinky.json', { sha: newSha(), content: Buffer.from(JSON.stringify({ items }, null, 2) + '\n') });
+  seedFile(MASTER, items);
+  seedFile(PUBLIC, items.filter((it) => it.publikovano === true));
 }
-function readNews() {
-  return JSON.parse(github.files.get('web/data/novinky.json').content.toString('utf8'));
+function readFile(path) {
+  return github.files.has(path) ? JSON.parse(github.files.get(path).content.toString('utf8')) : null;
 }
+const readNews = () => readFile(MASTER);
+const readPublic = () => readFile(PUBLIC);
 
 const origErr = console.error, origWarn = console.warn;
 console.error = () => {};
@@ -287,7 +295,8 @@ let cookie; // nastaví test přihlášení
 // 12) POST platná položka -> GitHub PUT s base64 JSON obsahujícím položku, správné sha, seřazeno
 {
   calls.length = 0;
-  const oldSha = github.files.get('web/data/novinky.json').sha;
+  const oldSha = github.files.get(MASTER).sha;
+  const oldPublicSha = github.files.get(PUBLIC).sha;
   const item = { nadpis: 'Zimní pneu – akce', datum: '2026-11-08', text: 'První odstavec.\r\n\r\nDruhý odstavec.', publikovano: true };
   const res = await run(novinky, { method: 'POST', body: item, headers: { cookie, ...csrf } });
   assert.equal(res.statusCode, 200, res.body);
@@ -295,9 +304,14 @@ let cookie; // nastaví test přihlášení
   assert.equal(res.json.message, 'Uloženo. Na webu se objeví do minuty až dvou.');
   assert.match(res.json.item.id, /^2026-11-08-[a-z0-9]{6}$/);
   const puts = ghCalls('PUT', 'novinky.json');
-  assert.equal(puts.length, 1);
+  assert.equal(puts.length, 2, 'hlavní soubor + veřejný soubor');
+  assert.equal(ghPath(puts[0].url), MASTER, 'nejdřív hlavní soubor');
   assert.equal(puts[0].body.sha, oldSha, 'PUT musí poslat sha aktuálního souboru');
   assert.equal(puts[0].body.message, 'Aktuality: Zimní pneu – akce');
+  assert.equal(ghPath(puts[1].url), PUBLIC, 'potom veřejný soubor');
+  assert.equal(puts[1].body.sha, oldPublicSha);
+  assert.equal(puts[1].body.message, 'Aktuality: Zimní pneu – akce (web)');
+  assert.deepEqual(readPublic().items.map((it) => it.nadpis), ['Zimní pneu – akce', 'Starší']);
   const written = JSON.parse(Buffer.from(puts[0].body.content, 'base64').toString('utf8'));
   assert.equal(written.items.length, 2);
   assert.equal(written.items[0].nadpis, 'Zimní pneu – akce', 'nejnovější první');
@@ -314,23 +328,38 @@ let imageItemId;
   calls.length = 0;
   const jpegBytes = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(300, 1), Buffer.from([0xff, 0xd9])]);
   const dataUrl = 'data:image/jpeg;base64,' + jpegBytes.toString('base64');
+  const publicBefore = JSON.stringify(readPublic());
   const res = await run(novinky, { method: 'POST', body: { nadpis: 'S obrázkem', datum: '2026-11-09', text: 'T', publikovano: false, obrazek: dataUrl }, headers: { cookie, ...csrf } });
   assert.equal(res.statusCode, 200, res.body);
+  assert.equal(res.json.message, 'Uloženo jako skrytá aktualita. Na webu se nezobrazuje, dokud ji nezveřejníte.');
   imageItemId = res.json.item.id;
   assert.equal(res.json.item.obrazek, `/data/obrazky/${imageItemId}.jpg`);
   const puts = calls.filter((c) => c.method === 'PUT');
-  assert.equal(puts.length, 2);
+  assert.equal(puts.length, 2, 'obrázek + hlavní soubor; veřejný soubor se u návrhu nemění');
   assert.ok(ghPath(puts[0].url).startsWith('web/data/obrazky/'), 'obrázek se ukládá první');
+  assert.equal(ghPath(puts[1].url), MASTER);
   assert.ok(github.files.get(`web/data/obrazky/${imageItemId}.jpg`).content.equals(jpegBytes));
   assert.equal(readNews().items[0].obrazek, `/data/obrazky/${imageItemId}.jpg`);
+  assert.equal(JSON.stringify(readPublic()), publicBefore, 'návrh se nesmí dostat do veřejného JSONu');
+  assert.ok(!JSON.stringify(readPublic()).includes('S obrázkem'));
 
-  // úprava bez pole obrazek -> obrázek zůstává
+  // úprava bez pole obrazek -> obrázek zůstává; zveřejnění -> položka přibude do veřejného souboru
   calls.length = 0;
   const upd = await run(novinky, { method: 'POST', body: { id: imageItemId, nadpis: 'S obrázkem (upraveno)', datum: '2026-11-09', text: 'T2', publikovano: true }, headers: { cookie, ...csrf } });
   assert.equal(upd.statusCode, 200);
   assert.equal(upd.json.item.obrazek, `/data/obrazky/${imageItemId}.jpg`);
   assert.equal(readNews().items.length, 3, 'úprava nesmí přidat položku');
   assert.equal(ghCalls('DELETE').length, 0);
+  const pubItem = readPublic().items.find((it) => it.id === imageItemId);
+  assert.ok(pubItem, 'po zveřejnění je položka ve veřejném souboru');
+  assert.equal(pubItem.obrazek, `/data/obrazky/${imageItemId}.jpg`);
+
+  // zpět na skrytou -> z veřejného souboru zmizí
+  const hide = await run(novinky, { method: 'POST', body: { id: imageItemId, nadpis: 'S obrázkem (upraveno)', datum: '2026-11-09', text: 'T2', publikovano: false }, headers: { cookie, ...csrf } });
+  assert.equal(hide.statusCode, 200);
+  assert.equal(hide.json.message, 'Uloženo a skryto. Z webu zmizí do minuty až dvou.');
+  assert.ok(!readPublic().items.some((it) => it.id === imageItemId), 'skrytá položka zmizí z veřejného souboru');
+  assert.ok(readNews().items.some((it) => it.id === imageItemId), 'v hlavním souboru zůstává');
 
   // obrazek: null -> JSON bez obrázku a soubor smazán
   const rm = await run(novinky, { method: 'POST', body: { id: imageItemId, nadpis: 'S obrázkem (bez)', datum: '2026-11-09', text: 'T3', publikovano: true, obrazek: null }, headers: { cookie, ...csrf } });
@@ -364,9 +393,11 @@ let imageItemId;
   github.conflictOnce = true;
   const res = await run(novinky, { method: 'POST', body: { nadpis: 'Po konfliktu', datum: '2026-11-10', text: 'T', publikovano: true }, headers: { cookie, ...csrf } });
   assert.equal(res.statusCode, 200, res.body);
-  assert.equal(ghCalls('PUT', 'novinky.json').length, 2, 'po 409 následuje druhý PUT');
-  assert.equal(ghCalls('GET', 'novinky.json').length, 2, 'před druhým PUT se soubor znovu načte');
+  assert.equal(ghCalls('PUT', MASTER).length, 2, 'po 409 následuje druhý PUT');
+  assert.equal(ghCalls('GET', MASTER).length, 2, 'před druhým PUT se soubor znovu načte');
+  assert.equal(ghCalls('PUT', PUBLIC).length, 1, 'veřejný soubor se zapíše jednou');
   assert.equal(readNews().items[0].nadpis, 'Po konfliktu');
+  assert.equal(readPublic().items[0].nadpis, 'Po konfliktu');
   console.log('OK  novinky konflikt sha -> opakování 1×');
 }
 
@@ -388,6 +419,8 @@ let imageItemId;
   const after = readNews();
   assert.equal(after.items.length, before - 1);
   assert.ok(!after.items.some((it) => it.id === id));
+  assert.ok(!readPublic().items.some((it) => it.id === id), 'smazaná položka zmizí i z veřejného souboru');
+  assert.equal(res.json.message, 'Smazáno. Z webu zmizí do minuty až dvou.');
   assert.equal(github.files.has(`web/data/obrazky/${id}.jpg`), false, 'obrázek musí být smazán');
   const del = ghCalls('DELETE');
   assert.equal(del.length, 1);
@@ -409,6 +442,25 @@ let imageItemId;
   process.env.GITHUB_TOKEN = saved;
   assert.equal((await run(novinky, { method: 'PUT', headers: { cookie, ...csrf } })).statusCode, 405);
   console.log('OK  novinky chybějící konfigurace -> 500, PUT -> 405');
+}
+
+// 18) migrace: hlavní soubor chybí, existuje jen veřejný -> převezme položky, založí hlavní soubor;
+//     veřejný soubor nikdy neobsahuje návrhy, GET pro správce je vrací
+{
+  github.files.delete(MASTER);
+  seedFile(PUBLIC, [{ id: '2026-10-01-bbbbbb', datum: '2026-10-01', nadpis: 'Jen veřejná', text: 'T', obrazek: null, publikovano: true }]);
+  calls.length = 0;
+  const res = await run(novinky, { method: 'POST', body: { nadpis: 'Návrh po migraci', datum: '2026-11-12', text: 'Tajný text návrhu', publikovano: false }, headers: { cookie, ...csrf } });
+  assert.equal(res.statusCode, 200, res.body);
+  const master = readNews();
+  assert.deepEqual(master.items.map((it) => it.nadpis), ['Návrh po migraci', 'Jen veřejná']);
+  const pub = readPublic();
+  assert.deepEqual(pub.items.map((it) => it.nadpis), ['Jen veřejná']);
+  assert.ok(!JSON.stringify(pub).includes('Tajný text'), 'text návrhu nesmí být ve veřejném souboru');
+  assert.equal(ghCalls('PUT', PUBLIC).length, 0, 'veřejný soubor se beze změny nepřepisuje');
+  const list = await run(novinky, { method: 'GET', headers: { cookie } });
+  assert.equal(list.json.items.length, 2, 'správce vidí i návrhy');
+  console.log('OK  novinky migrace z veřejného souboru, návrhy jen v hlavním souboru');
 }
 
 console.error = origErr;

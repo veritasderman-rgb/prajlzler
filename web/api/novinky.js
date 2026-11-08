@@ -1,4 +1,8 @@
-// Vercel serverless funkce: správa aktualit (web/data/novinky.json + obrázky ve web/data/obrazky/).
+// Vercel serverless funkce: správa aktualit.
+// Zdroj pravdy (včetně nezveřejněných návrhů) je obsah/aktuality/novinky.json – leží MIMO složku web/,
+// Vercel ho tedy nikdy nevystaví. Web čte jen web/data/novinky.json, kam funkce zapisuje výhradně
+// zveřejněné položky. Obrázky jsou ve web/data/obrazky/ (veřejná cesta, ale bez odkazu z webu,
+// dokud není položka zveřejněná; repozitář sám je veřejný).
 // Zápis jde přímo do repozitáře na GitHubu přes REST API (contents API); Vercel po commitu web znovu
 // nasadí, změna je na webu zhruba do minuty. Node 20+, ESM, jen vestavěné moduly + globální fetch.
 //
@@ -14,13 +18,15 @@
 import { randomBytes } from 'node:crypto';
 import { csrfOk, getSession, MSG, readJson, sendJson } from './admin-session.js';
 
-const NEWS_PATH = 'web/data/novinky.json';
+const MASTER_PATH = 'obsah/aktuality/novinky.json'; // vše včetně návrhů, mimo nasazovanou složku web/
+const PUBLIC_PATH = 'web/data/novinky.json'; // jen zveřejněné položky, čte ho js/novinky.js
 const IMAGE_DIR = 'web/data/obrazky';
 const PUBLIC_IMAGE_DIR = '/data/obrazky';
 const MAX_IMAGE_BYTES = 1.5 * 1024 * 1024;
 const MAX_BODY_BYTES = 3 * 1024 * 1024;
 const COMMITTER = { name: 'AutoPraizler web', email: 'web@josefpavlovic.cz' };
-const SAVED_MESSAGE = 'Uloženo. Na webu se objeví do minuty až dvou.';
+const SAVED_PUBLIC = 'Uloženo. Na webu se objeví do minuty až dvou.';
+const SAVED_HIDDEN = 'Uloženo jako skrytá aktualita. Na webu se nezobrazuje, dokud ji nezveřejníte.';
 const ID_RE = /^\d{4}-\d{2}-\d{2}-[a-z0-9]{4,16}$/;
 
 class UserError extends Error {
@@ -85,18 +91,24 @@ function isConflict(status) {
   return status === 409 || status === 422;
 }
 
-// Načte novinky.json; chybějící nebo poškozený soubor bere jako prázdný seznam.
-async function readNews(cfg) {
-  const file = await ghGetFile(cfg, NEWS_PATH);
-  if (!file) return { items: [], sha: undefined };
-  let items = [];
+function parseItems(file, label) {
+  if (!file) return [];
   try {
     const parsed = JSON.parse(file.content.toString('utf8'));
-    if (parsed && Array.isArray(parsed.items)) items = parsed.items.filter((it) => it && typeof it === 'object');
+    if (parsed && Array.isArray(parsed.items)) return parsed.items.filter((it) => it && typeof it === 'object');
   } catch (err) {
-    console.error('novinky: novinky.json není platný JSON, bude přepsán', err && err.message);
+    console.error(`novinky: ${label} není platný JSON, bude přepsán`, err && err.message);
   }
-  return { items, sha: file.sha };
+  return [];
+}
+
+// Načte hlavní soubor (včetně návrhů). Když ještě neexistuje, převezme položky z veřejného souboru
+// (jednorázová migrace ze starší verze, kdy byl veřejný soubor jediný).
+async function readNews(cfg) {
+  const master = await ghGetFile(cfg, MASTER_PATH);
+  if (master) return { items: parseItems(master, MASTER_PATH), sha: master.sha };
+  const pub = await ghGetFile(cfg, PUBLIC_PATH);
+  return { items: parseItems(pub, PUBLIC_PATH), sha: undefined };
 }
 
 function sortItems(items) {
@@ -110,20 +122,46 @@ function serialize(items) {
   return Buffer.from(JSON.stringify({ items: sortItems(items) }, null, 2) + '\n', 'utf8');
 }
 
-// Přečte soubor, aplikuje `mutate(items)` a uloží; při konfliktu sha (409/422) to jednou zopakuje.
+// Veřejná podoba: jen zveřejněné položky a jen pole, která web potřebuje (žádné návrhy).
+function publicItems(items) {
+  return items
+    .filter((it) => it.publikovano === true)
+    .map((it) => ({ id: it.id, datum: it.datum, nadpis: it.nadpis, text: it.text, obrazek: it.obrazek || null, publikovano: true }));
+}
+
+// Přečte hlavní soubor, aplikuje `mutate(items)` a uloží; při konfliktu sha (409/422) to jednou zopakuje.
+// Potom přepíše veřejný soubor, pokud se jeho obsah změnil (uložení návrhu tak nevyvolá nové nasazení).
 async function updateNews(cfg, message, mutate) {
+  let result = null;
   for (let attempt = 0; attempt < 2; attempt++) {
     const { items, sha } = await readNews(cfg);
-    const result = mutate(items.map((it) => ({ ...it })));
-    const r = await ghPutFile(cfg, NEWS_PATH, serialize(result.items), message, sha);
-    if (r.ok) return result;
+    result = mutate(items.map((it) => ({ ...it })));
+    const r = await ghPutFile(cfg, MASTER_PATH, serialize(result.items), message, sha);
+    if (r.ok) break;
+    result = null;
     if (isConflict(r.status) && attempt === 0) {
       console.warn('novinky: konflikt sha při zápisu, zkouším znovu');
       continue;
     }
-    throw new Error(`GitHub PUT ${NEWS_PATH} -> ${r.status}`);
+    throw new Error(`GitHub PUT ${MASTER_PATH} -> ${r.status}`);
   }
-  throw new Error('GitHub PUT: opakovaný konflikt');
+  if (!result) throw new Error('GitHub PUT: opakovaný konflikt');
+  result.publicChanged = await publishNews(cfg, result.items, message);
+  return result;
+}
+
+// Zapíše web/data/novinky.json jen se zveřejněnými položkami. Vrací true, když se soubor změnil.
+async function publishNews(cfg, items, message) {
+  const wanted = serialize(publicItems(items));
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const existing = await ghGetFile(cfg, PUBLIC_PATH);
+    if (existing && existing.content.equals(wanted)) return false;
+    const r = await ghPutFile(cfg, PUBLIC_PATH, wanted, `${message} (web)`, existing ? existing.sha : undefined);
+    if (r.ok) return true;
+    if (isConflict(r.status) && attempt === 0) continue;
+    throw new Error(`GitHub PUT ${PUBLIC_PATH} -> ${r.status}`);
+  }
+  throw new Error('GitHub PUT: opakovaný konflikt (veřejný soubor)');
 }
 
 // Zapíše (nebo přepíše) soubor; při konfliktu sha jednou znovu načte sha a zopakuje.
@@ -263,7 +301,8 @@ async function handlePost(cfg, req, res) {
     if (repoPath) await deleteFileQuiet(cfg, repoPath, `Aktuality: odstraněn starý obrázek k „${label}“`);
   }
 
-  sendJson(res, 200, { ok: true, item: result.item, message: SAVED_MESSAGE });
+  const message = result.item.publikovano ? SAVED_PUBLIC : (result.publicChanged ? 'Uloženo a skryto. Z webu zmizí do minuty až dvou.' : SAVED_HIDDEN);
+  sendJson(res, 200, { ok: true, item: result.item, message });
 }
 
 async function handleDelete(cfg, req, res) {
@@ -271,7 +310,7 @@ async function handleDelete(cfg, req, res) {
   if (!ID_RE.test(id)) throw new UserError(MSG.badRequest);
 
   let removed = null;
-  await updateNews(cfg, `Aktuality: smazáno ${id}`, (items) => {
+  const result = await updateNews(cfg, `Aktuality: smazáno ${id}`, (items) => {
     const idx = items.findIndex((it) => it.id === id);
     if (idx === -1) throw new UserError('Aktualita už neexistuje. Obnovte prosím stránku.', 404);
     removed = items[idx];
@@ -282,7 +321,7 @@ async function handleDelete(cfg, req, res) {
   const repoPath = imageRepoPath(removed && removed.obrazek);
   if (repoPath) await deleteFileQuiet(cfg, repoPath, `Aktuality: smazán obrázek k ${id}`);
 
-  sendJson(res, 200, { ok: true, message: 'Smazáno. Z webu zmizí do minuty až dvou.' });
+  sendJson(res, 200, { ok: true, message: result.publicChanged ? 'Smazáno. Z webu zmizí do minuty až dvou.' : 'Smazáno.' });
 }
 
 /* ---------- Handler ---------- */

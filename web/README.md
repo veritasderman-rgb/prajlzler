@@ -112,7 +112,10 @@ Chování po vyplnění alespoň jednoho ID:
   `generate_lead`, Sklik `rc.conversionHit({ id, value, consent: 1 })`;
   kliknutí na `tel:` odkaz → Google Ads konverze s `googleAdsCallLabel`,
   GA4 událost `phone_call_click`;
-- v patičce se objeví odkaz „Nastavení cookies“, který lištu znovu otevře.
+- v patičce se objeví odkaz „Nastavení cookies“, který lištu znovu otevře;
+  když návštěvník souhlas odvolá (Odmítnout po dřívějším Přijmout), už
+  načtený Google tag dostane `consent update` se vším `denied` a čekající
+  konverze Sklik se zahodí.
 
 CSP ve `vercel.json` už povoluje potřebné domény (googletagmanager.com,
 google-analytics.com, analytics.google.com, stats.g.doubleclick.net,
@@ -247,8 +250,9 @@ stránce (poslední tři, sekce AKTUALITY) a všechny na `/novinky/`.
 ### Jak to funguje
 
 ```
+obsah/aktuality/novinky.json      zdroj pravdy: všechny aktuality včetně skrytých (mimo web/, Vercel ho nenasazuje)
 web/
-├── data/novinky.json             data aktualit (zdroj pravdy, čte ho web i administrace)
+├── data/novinky.json             veřejný výpis: jen zveřejněné položky (zapisuje ho funkce api/novinky.js)
 ├── data/obrazky/<id>.jpg         fotky k aktualitám (zmenšené v prohlížeči na max. 1200 px)
 ├── js/novinky.js                 veřejný skript: načte /data/novinky.json a vykreslí položky
 ├── css/novinky.css               styly sekce AKTUALITY a stránky /novinky/
@@ -261,17 +265,26 @@ web/
 ```
 
 - Web je statický: `js/novinky.js` si stáhne `/data/novinky.json` (bez cache)
-  a zobrazí jen položky s `publikovano: true`. Když žádná zveřejněná není,
-  sekce na úvodu zůstane skrytá a stránka vypadá jako dřív. Text je prostý
-  (odstavce oddělené prázdným řádkem), vše se escapuje, HTML v textu se
-  nevykládá.
+  a vykreslí položky. Soubor obsahuje **jen zveřejněné** aktuality; skryté
+  návrhy v něm nejsou, takže je návštěvník nemůže stáhnout. Když žádná
+  zveřejněná není, sekce na úvodu zůstane skrytá a stránka vypadá jako dřív.
+  Text je prostý (odstavce oddělené prázdným řádkem), vše se escapuje, HTML
+  v textu se nevykládá.
 - Administrace nemá databázi. Každé uložení zapíše změnu **přímo do
-  repozitáře na GitHubu** (REST API `contents`): funkce načte aktuální
-  `web/data/novinky.json` včetně `sha`, upraví ho a odešle commit
-  `Aktuality: <nadpis>` (autor „AutoPraizler web <web@josefpavlovic.cz>“).
+  repozitáře na GitHubu** (REST API `contents`): funkce načte
+  `obsah/aktuality/novinky.json` (všechny položky včetně skrytých) včetně
+  `sha`, upraví ho a odešle commit `Aktuality: <nadpis>` (autor
+  „AutoPraizler web <web@josefpavlovic.cz>“). Potom z něj odvodí veřejný
+  `web/data/novinky.json` a zapíše ho dalším commitem `… (web)` – ale jen
+  když se jeho obsah změnil; uložení skrytého návrhu tedy web nemění.
   Fotka se uloží jako `web/data/obrazky/<id>.jpg` samostatným commitem před
   JSONem, aby web nikdy neodkazoval na chybějící soubor. Smazání položku
-  odstraní z JSONu a smaže i soubor fotky.
+  odstraní z obou JSONů a smaže i soubor fotky.
+- Pokud hlavní soubor `obsah/aktuality/novinky.json` neexistuje (první
+  nasazení), funkce převezme položky z veřejného souboru a hlavní založí.
+- Repozitář je veřejný, takže skryté návrhy jsou technicky vidět na GitHubu
+  (a jejich fotky na `/data/obrazky/`, i když na ně web neodkazuje). Na webu
+  samotném se nezobrazují. Do aktualit proto nepatří nic důvěrného.
 - Vercel po každém commitu web znovu nasadí, změna je tedy na webu zhruba
   do minuty až dvou. Administrace to po uložení majiteli říká.
 - Konflikt verzí (někdo mezitím zapsal do stejného souboru, GitHub vrátí
