@@ -167,12 +167,17 @@
     });
   }
 
-  /* ---------- Kontaktní formulář ---------- */
-  var form = document.querySelector('form.form[data-endpoint]');
-  if (form) {
-    var statusEl = document.getElementById('form-status');
-    var okText = 'Děkujeme, zpráva byla odeslána. Ozveme se Vám co nejdříve.';
-    var errText = 'Zprávu se nepodařilo odeslat. Zavolejte nám prosím na +420 728 920 290 nebo napište na servis@autopraizler.cz.';
+  /* ---------- Poptávkový formulář (Kontakt, vstupní stránky služeb, /de/) ---------- */
+  // Funguje pro každý <form class="form" data-endpoint="/api/kontakt"> na stránce.
+  // Volitelné atributy formuláře: data-status (id prvku pro stav, výchozí "form-status"),
+  // data-ok / data-err (vlastní texty, např. německé; je-li data-err uveden, chybové hlášky z API se nezobrazují).
+  var forms = document.querySelectorAll('form.form[data-endpoint]');
+  var params = new URLSearchParams(window.location.search);
+  Array.prototype.forEach.call(forms, function (form) {
+    var statusEl = document.getElementById(form.getAttribute('data-status') || 'form-status');
+    var okText = form.getAttribute('data-ok') || 'Děkujeme, zpráva byla odeslána. Ozveme se Vám co nejdříve.';
+    var errText = form.getAttribute('data-err') || 'Zprávu se nepodařilo odeslat. Zavolejte nám prosím na +420 728 920 290 nebo napište na servis@autopraizler.cz.';
+    var showServerError = !form.hasAttribute('data-err');
 
     var setStatus = function (kind, text) {
       if (!statusEl) return;
@@ -182,7 +187,6 @@
     };
 
     // stav po odeslání bez JavaScriptu (přesměrování z /api/kontakt)
-    var params = new URLSearchParams(window.location.search);
     if (params.get('odeslano') === '1') setStatus('ok', okText);
     if (params.get('chyba') === '1') setStatus('err', errText);
 
@@ -216,11 +220,12 @@
       var payload = {
         jmeno: name.value.trim(),
         email: email.value.trim(),
-        telefon: form.elements.telefon.value.trim(),
-        termin: form.elements.termin.value.trim(),
+        telefon: form.elements.telefon ? form.elements.telefon.value.trim() : '',
+        termin: form.elements.termin ? form.elements.termin.value.trim() : '',
         zprava: message.value.trim(),
         souhlas: consent.checked ? '1' : '',
-        website: form.elements.website.value
+        website: form.elements.website ? form.elements.website.value : '',
+        zpet: form.elements.zpet ? form.elements.zpet.value : ''
       };
 
       fetch(form.getAttribute('data-endpoint'), {
@@ -232,8 +237,12 @@
           if (res.ok && data.ok) {
             setStatus('ok', okText);
             form.reset();
+            // událost pro měření konverzí (js/mereni.js); bez souhlasu s cookies se nic neodesílá
+            try {
+              document.dispatchEvent(new CustomEvent('ap:form-sent', { detail: { form: form, page: window.location.pathname } }));
+            } catch (err) { /* starší prohlížeče bez CustomEvent – měření se přeskočí */ }
           } else {
-            setStatus('err', (data && data.error) ? data.error : errText);
+            setStatus('err', (showServerError && data && data.error) ? data.error : errText);
           }
         });
       }).catch(function () {
@@ -242,5 +251,5 @@
         btn.disabled = false;
       });
     });
-  }
+  });
 })();

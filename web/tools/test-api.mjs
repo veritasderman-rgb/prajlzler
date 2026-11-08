@@ -119,6 +119,20 @@ const valid = { jmeno: 'Jan Novák', email: 'jan@example.com', telefon: '777 000
   assert.equal(bad.statusCode, 303);
   assert.equal(bad.headers.location, '/kontakt/?chyba=1#chyba');
   console.log('OK  form-encoded -> 303 na /kontakt/?odeslano=1 resp. ?chyba=1');
+
+  // zpet: povolená stránka -> přesměrování na ni; nepovolená -> /kontakt/
+  const okZpet = await run({ body: new URLSearchParams({ ...valid, zpet: '/pneuservis/' }).toString(), contentType: 'application/x-www-form-urlencoded' });
+  assert.equal(okZpet.statusCode, 303);
+  assert.equal(okZpet.headers.location, '/pneuservis/?odeslano=1#odeslano');
+  const badZpet = await run({ body: new URLSearchParams({ ...valid, zpet: 'https://evil.example/' }).toString(), contentType: 'application/x-www-form-urlencoded' });
+  assert.equal(badZpet.headers.location, '/kontakt/?odeslano=1#odeslano');
+  console.log('OK  zpet: povolená stránka ano, cizí URL -> /kontakt/');
+
+  // /de/: chybové hlášky německy
+  const de = await run({ body: JSON.stringify({ ...valid, email: 'spatne', zpet: '/de/' }) });
+  assert.equal(de.statusCode, 400);
+  assert.match(JSON.parse(de.body).error, /E-Mail-Adresse/);
+  console.log('OK  /de/ -> německé hlášky');
 }
 
 // 7) výchozí CONTACT_FROM

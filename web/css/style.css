@@ -167,7 +167,8 @@ svg.icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-wid
 }
 @media (max-width: 560px) {
   .topbar { font-size: 12px; line-height: 1.5; padding: 6px 0; }
-  .topbar .container { gap: 8px 12px; }
+  .topbar .container { gap: 8px 10px; }
+  .topbar .sep { display: none; }
   .brand img { height: 38px; }
 }
 
@@ -181,6 +182,7 @@ svg.icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-wid
 .section--dark h1, .section--dark h2, .section--dark h3 { color: #fff; }
 .strip { padding: 44px 0; text-align: center; }
 .strip h1, .strip h2 { margin: 0; text-transform: uppercase; }
+.strip p { margin: 12px auto 0; max-width: 760px; font-size: 18px; color: #e8e8e8; }
 .strip .strip-icon { display: block; margin: 0 auto 14px; width: 56px; height: 56px; color: var(--red); }
 .page-dark { background-color: var(--black); background-image: var(--noise); color: #e8e8e8; }
 .text-center { text-align: center; }
@@ -481,4 +483,139 @@ svg.icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-wid
   .js .reveal { opacity: 1; transform: none; transition: none; }
   .hero__slide { transition: none; }
   .tile img, .gallery img, .footer-boxes a, .partner-box { transition: none; }
+}
+
+/* ---------- Jazykový přepínač v horní liště ---------- */
+.topbar .lang {
+  font-weight: 800; font-size: 12px; letter-spacing: .08em; padding: 0 8px; min-height: 24px; border: 1px solid #555; border-radius: 3px; line-height: 22px;
+}
+.topbar .lang:hover { border-color: var(--red); color: var(--red); }
+
+/* ---------- Recenze (úvod) ---------- */
+.reviews { text-align: center; }
+.reviews h2 { text-transform: uppercase; margin-bottom: 26px; }
+.reviews .ratings { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 36px; }
+.rating-badge {
+  display: inline-flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--grey-line); border-radius: 4px; padding: 12px 18px; text-align: left;
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+}
+.rating-badge .score { font-family: var(--font-head); font-size: 28px; color: var(--red); line-height: 1; white-space: nowrap; }
+.rating-badge .score .star { font-size: 22px; vertical-align: 2px; }
+.rating-badge .src { font-weight: 800; font-size: 14px; display: block; color: var(--text); }
+.rating-badge .detail { font-size: 13px; color: #666; display: block; }
+.reviews .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: left; margin-bottom: 34px; }
+.reviews blockquote {
+  margin: 0; background: #fff; border: 1px solid var(--grey-line); border-top: 4px solid var(--red); border-radius: 4px; padding: 22px 22px 18px; display: flex; flex-direction: column; gap: 12px;
+}
+.reviews blockquote .stars { color: #f5a623; font-size: 16px; letter-spacing: 2px; }
+.reviews blockquote p { margin: 0; font-size: 15px; line-height: 1.6; flex: 1; }
+.reviews blockquote footer { font-size: 13px; color: #666; }
+.reviews blockquote footer b { color: var(--text); }
+.reviews .actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 860px) { .reviews .quotes { grid-template-columns: 1fr; } }
+
+/* ---------- Vstupní stránky služeb (PPC) ---------- */
+.landing { padding: 56px 0 64px; }
+.landing .grid { display: grid; grid-template-columns: 1.15fr 1fr; grid-template-areas: "text fig" "text cta"; gap: 0 44px; align-items: start; }
+.landing .landing__text { grid-area: text; }
+.landing .grid > figure { grid-area: fig; }
+.landing .grid > .cta-box { grid-area: cta; align-self: start; }
+.landing .lead { font-size: 18px; line-height: 1.6; }
+.landing h2 { font-family: var(--font-body); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: .05em; color: var(--text); margin: 28px 0 10px; }
+.landing .checks { display: grid; gap: 10px; margin: 0 0 8px; }
+.landing .checks li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; font-size: 16px; line-height: 1.5; }
+.landing .checks .icon { width: 22px; height: 22px; color: var(--red); stroke-width: 2.4; margin-top: 2px; }
+.landing .note { font-size: 14px; color: #555; border-left: 4px solid var(--red); padding: 10px 14px; background: var(--grey-light); margin: 16px 0 24px; }
+.landing figure { margin: 0 0 24px; }
+.landing figure img { width: 100%; border-radius: 3px; }
+.landing figcaption { font-size: 13px; color: #666; margin-top: 8px; }
+.landing .cta-box { background: var(--grey-light); border-radius: 4px; padding: 22px; text-align: center; }
+.landing .cta-box p { margin: 0 0 12px; font-weight: 800; }
+.landing .cta-box .small { font-weight: 400; font-size: 13px; color: #666; margin: 12px 0 0; }
+.btn--big { font-size: 18px; padding: 16px 26px; }
+.btn--big .icon { width: 24px; height: 24px; }
+.landing .btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.inquiry { padding: 60px 0; scroll-margin-top: calc(var(--header-h) + 10px); }
+.inquiry .inner { max-width: 720px; margin: 0 auto; }
+.inquiry h2 { text-align: center; margin-bottom: 8px; }
+.inquiry .intro { text-align: center; color: var(--grey-text); margin-bottom: 26px; }
+.inquiry .form a, .inquiry a { color: #fff; }
+.inquiry .form .small { color: var(--grey-text); font-size: 13px; margin: 0; }
+.contact__form { scroll-margin-top: calc(var(--header-h) + 10px); }
+@media (max-width: 860px) {
+  .landing .grid { grid-template-columns: 1fr; grid-template-areas: "fig" "text" "cta"; gap: 0; }
+  .landing .grid > .cta-box { margin-top: 28px; }
+}
+
+/* ---------- Německá stránka ---------- */
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; counter-reset: step; margin: 0; padding: 0; list-style: none; }
+.steps li { background: #1b1b1b; border: 1px solid #333; border-radius: 4px; padding: 22px 20px 18px; counter-increment: step; position: relative; }
+.steps li::before { content: counter(step); display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--red); color: #fff; font-family: var(--font-head); font-size: 20px; margin-bottom: 12px; }
+.steps h3 { font-family: var(--font-body); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: .03em; color: #fff; margin: 0 0 6px; }
+.steps p { margin: 0; color: var(--grey-text); font-size: 15px; line-height: 1.5; }
+.help-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.help-grid li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; }
+.help-grid .icon { width: 30px; height: 30px; color: var(--red); stroke-width: 1.6; margin-top: 2px; }
+.help-grid h3 { font-family: var(--font-body); font-weight: 800; font-size: 16px; margin: 0 0 4px; }
+.help-grid p { margin: 0; font-size: 14px; line-height: 1.5; color: #555; }
+.de-contact .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+.de-contact h2 { font-size: clamp(22px, 2.4vw, 28px); }
+.de-contact h3 { font-family: var(--font-body); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: .04em; margin: 22px 0 6px; color: #fff; }
+.de-contact address { font-style: normal; line-height: 1.7; }
+.de-contact dl { margin: 10px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
+.de-contact dt { font-weight: 800; }
+.de-contact dd { margin: 0; }
+.de-contact a { color: #fff; }
+.de-contact a:hover { color: #ffb3b9; }
+.de-contact .checks { display: grid; gap: 8px; margin: 10px 0 0; }
+.de-contact .checks li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; font-size: 15px; }
+.de-contact .checks .icon { width: 20px; height: 20px; color: var(--red); stroke-width: 2.4; margin-top: 3px; }
+.section-head { text-align: center; max-width: 760px; margin: 0 auto 36px; }
+.section-head h2 { text-transform: uppercase; margin-bottom: 8px; }
+.section-head p { color: #666; margin: 0; }
+.section--dark .section-head p { color: var(--grey-text); }
+@media (max-width: 960px) { .steps, .help-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 760px) { .de-contact .grid { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .steps, .help-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Pevná lišta s telefonem (mobil) ---------- */
+.call-bar { display: none; }
+@media (max-width: 767px) {
+  body { padding-bottom: 62px; }
+  .call-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 850; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #000;
+    box-shadow: 0 -4px 14px rgba(0,0,0,.35); padding-bottom: env(safe-area-inset-bottom);
+  }
+  .call-bar a {
+    display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 60px; padding: 8px 10px;
+    color: #fff; text-decoration: none; font-weight: 800; font-size: 15px; letter-spacing: .05em; text-transform: uppercase;
+  }
+  .call-bar a .icon { width: 22px; height: 22px; stroke-width: 2.2; }
+  .call-bar__call { background: var(--red); }
+  .call-bar__call:hover { background: var(--red-dark); color: #fff; }
+  .call-bar__book { background: var(--black); background-image: var(--noise); }
+  .call-bar__book:hover { background-color: #000; color: #fff; }
+  .to-top { bottom: 76px; }
+}
+
+/* ---------- Lišta souhlasu s cookies (vykreslí js/mereni.js jen při nastaveném měření) ---------- */
+.cookie-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 950; background: var(--grey-dark); color: #e8e8e8; font-size: 14px; line-height: 1.5;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.4); border-top: 3px solid var(--red);
+}
+.cookie-bar .container { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 16px; padding-bottom: 16px; flex-wrap: wrap; }
+.cookie-bar p { margin: 0; flex: 1 1 420px; }
+.cookie-bar a { color: #fff; }
+.cookie-bar .cookie-bar__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.cookie-bar .btn { font-size: 13px; padding: 10px 16px; }
+.cookie-bar .btn--ghost { background: transparent; color: #fff; border: 2px solid #777; }
+.cookie-bar .btn--ghost:hover { border-color: #fff; background: transparent; }
+@media (max-width: 767px) { .cookie-bar { bottom: 62px; } }
+.cookie-settings .link-btn { background: none; border: 0; padding: 0; color: #fff; font: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.cookie-settings .link-btn:hover { color: var(--red); }
+.copyright .cookie-settings[hidden] { display: none; }
+
+@media print {
+  .call-bar, .cookie-bar, .to-top, .topbar .lang, .nav-toggle { display: none !important; }
+  body { padding-bottom: 0; }
 }

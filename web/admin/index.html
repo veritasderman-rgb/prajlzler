@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="cs" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Správa aktualit – AutoPraizler M.L.</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#F53F4C">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/audiowide-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/coda-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="admin-body">
+<a class="skip-link" href="#obsah">Přejít na obsah</a>
+<svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="i-facebook" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v9h4v-9h3l1-4h-4V8z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12 20 3m-3 3 3 3m-6 0 2 2"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4m8-4v4M8 15l2 2 4-4"/></symbol>
+</svg>
+<div class="topbar">
+  <div class="container">
+    <a href="tel:+420728920290"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg>+420 728 920 290</a>
+    <span class="sep" aria-hidden="true">|</span>
+    <a href="mailto:servis@autopraizler.cz"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mail"/></svg>servis@autopraizler.cz</a>
+    <a class="social" href="https://www.facebook.com/AutoPraizler-ML-104299981555466" target="_blank" rel="noopener" aria-label="AutoPraizler M.L. na Facebooku"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-facebook"/></svg></a>
+  </div>
+</div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="/" aria-label="AutoPraizler M.L. – úvodní stránka"><img src="/img/autopraizler-wordmark-white.svg" alt="AutoPraizler M.L." width="912" height="250"></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="hlavni-menu"><svg class="icon ico-menu" aria-hidden="true" focusable="false"><use href="#i-menu"/></svg><svg class="icon ico-close" aria-hidden="true" focusable="false"><use href="#i-close"/></svg><span>Menu</span></button>
+    <nav class="main-nav" id="hlavni-menu" aria-label="Hlavní menu">
+      <ul>
+      <li><a href="/">ÚVOD</a></li>
+      <li><a href="/sluzby/">SLUŽBY</a></li>
+      <li><a href="/usetrete/">UŠETŘETE ZA SERVIS !!!</a></li>
+      <li><a href="/cenik/">CENÍK</a></li>
+      <li><a href="/kontakt/">KONTAKT | OBJEDNÁVKA</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<main id="obsah" class="admin">
+<section class="section--dark strip admin-strip">
+  <div class="container">
+    <svg class="icon strip-icon" aria-hidden="true" focusable="false"><use href="#i-calendar"/></svg>
+    <h1>SPRÁVA AKTUALIT</h1>
+    <p class="admin-strip__sub">Zde přidáváte a upravujete aktuality, které se zobrazují na úvodní stránce a na <a href="/novinky/">/novinky/</a>.</p>
+  </div>
+</section>
+
+<!-- Obecná zpráva (chyby načítání, informace) -->
+<div class="container">
+  <p class="admin-status" id="admin-status" role="status" aria-live="polite" hidden></p>
+</div>
+
+<!-- 1) Přihlášení -->
+<section class="admin-screen" id="screen-login" hidden>
+  <div class="container container--narrow">
+    <div class="admin-card">
+      <h2><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-key"/></svg> Přihlášení</h2>
+      <p>Zadejte svůj e-mail. Pošleme vám na něj odkaz, kterým se přihlásíte – žádné heslo si pamatovat nemusíte.</p>
+      <form class="admin-form" id="login-form" novalidate>
+        <div class="field">
+          <label for="login-email">Váš e-mail</label>
+          <input type="email" id="login-email" name="email" autocomplete="email" inputmode="email" required placeholder="jmeno@example.cz">
+        </div>
+        <button class="btn btn--big" type="submit" id="login-submit">Poslat přihlašovací odkaz</button>
+      </form>
+      <p class="admin-msg" id="login-msg" role="status" aria-live="polite" hidden></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2) Výměna tokenu z odkazu -->
+<section class="admin-screen" id="screen-wait" hidden>
+  <div class="container container--narrow">
+    <div class="admin-card text-center">
+      <p class="admin-wait">Ověřujeme přihlášení…</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3) Přihlášený správce -->
+<section class="admin-screen" id="screen-app" hidden>
+  <div class="container">
+    <div class="admin-toolbar">
+      <p class="admin-user">Přihlášen(a): <b id="app-email"></b></p>
+      <div class="admin-toolbar__actions">
+        <button class="btn btn--big" type="button" id="btn-new">+ Nová aktualita</button>
+        <button class="btn btn--outline btn--big" type="button" id="btn-logout">Odhlásit se</button>
+      </div>
+    </div>
+
+    <p class="admin-msg" id="app-msg" role="status" aria-live="polite" hidden></p>
+
+    <div class="admin-grid">
+      <div class="admin-card admin-list-card">
+        <h2>Seznam aktualit</h2>
+        <p class="admin-hint">Zveřejněné aktuality vidí návštěvníci webu. Skryté vidíte jen vy zde.</p>
+        <ul class="admin-list" id="admin-list" aria-live="polite"></ul>
+        <p class="admin-empty" id="admin-empty" hidden>Zatím nemáte žádné aktuality. Začněte tlačítkem „Nová aktualita“.</p>
+        <p class="admin-loading" id="admin-loading" hidden>Načítám…</p>
+      </div>
+
+      <div class="admin-card admin-form-card" id="form-card" hidden>
+        <h2 id="form-title">Nová aktualita</h2>
+        <form class="admin-form" id="item-form" novalidate>
+          <input type="hidden" id="f-id" value="">
+          <div class="field">
+            <label for="f-nadpis">Nadpis <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="f-nadpis" name="nadpis" required minlength="3" maxlength="120" autocomplete="off" placeholder="Např. Zimní pneu – akce na přezutí">
+            <small class="field-help">3 až 120 znaků.</small>
+          </div>
+          <div class="field field--short">
+            <label for="f-datum">Datum <span class="req" aria-hidden="true">*</span></label>
+            <input type="date" id="f-datum" name="datum" required>
+          </div>
+          <div class="field">
+            <label for="f-text">Text <span class="req" aria-hidden="true">*</span></label>
+            <textarea id="f-text" name="text" required maxlength="5000" rows="8" placeholder="Napište, co chcete zákazníkům sdělit. Odstavce oddělte prázdným řádkem."></textarea>
+            <small class="field-help">Prostý text, odstavce oddělte prázdným řádkem. <span id="f-text-count"></span></small>
+          </div>
+          <div class="field">
+            <label for="f-obrazek">Obrázek (nepovinný)</label>
+            <input type="file" id="f-obrazek" name="obrazek" accept="image/jpeg,image/png,image/webp">
+            <small class="field-help">Fotka z telefonu je v pořádku – před odesláním se automaticky zmenší.</small>
+            <div class="image-preview" id="image-preview" hidden>
+              <img id="image-preview-img" alt="Náhled obrázku">
+              <button class="btn btn--outline" type="button" id="btn-remove-image">Odstranit obrázek</button>
+            </div>
+          </div>
+          <div class="field field--check">
+            <input type="checkbox" id="f-publikovano" name="publikovano">
+            <label for="f-publikovano"><b>Zveřejnit na webu</b><br><span class="field-help">Bez zaškrtnutí zůstane aktualita skrytá a můžete ji zveřejnit později.</span></label>
+          </div>
+          <div class="admin-form__actions">
+            <button class="btn btn--big" type="submit" id="btn-save">Uložit</button>
+            <button class="btn btn--outline btn--big" type="button" id="btn-cancel">Zrušit</button>
+          </div>
+          <p class="admin-msg" id="form-msg" role="status" aria-live="polite" hidden></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="copyright">
+    <div class="container">
+      <span>© 2026 AutoPraizler M.L.</span><span class="sep" aria-hidden="true">|</span><a href="/ochrana-osobnich-udaju/">Ochrana osobních údajů</a>
+    </div>
+  </div>
+</footer>
+<script src="/admin/admin.js" defer></script>
+</body>
+</html>

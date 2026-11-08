@@ -6,6 +6,9 @@
 <title>Auto Praizler Mariánské Lázně</title>
 <meta name="description" content="Autoservis a pneuservis AutoPraizler M.L. v Mariánských Lázních: opravy, STK a emise, klimatizace, autoskla, diagnostika a lakování. Volejte 728 920 290.">
 <link rel="canonical" href="https://autopraizler.cz/">
+<link rel="alternate" hreflang="cs" href="https://autopraizler.cz/">
+<link rel="alternate" hreflang="de" href="https://autopraizler.cz/de/">
+<link rel="alternate" hreflang="x-default" href="https://autopraizler.cz/">
 <meta name="theme-color" content="#F53F4C">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="cs_CZ">
@@ -18,6 +21,63 @@
 <link rel="preload" href="/fonts/audiowide-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/coda-400-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/novinky.css">
+<!-- Strukturovaná data (schema.org AutoRepair). Otevírací doba Po–Pá 8–12 a 13–17 odpovídá současnému webu, ale není potvrzená majitelem – po ověření upravit zde i na stránce Kontakt. Hodnocení (aggregateRating) záměrně neuvádíme: Google vlastní recenze na webu firmy v strukturovaných datech nepovoluje. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AutoRepair",
+  "@id": "https://autopraizler.cz/#firma",
+  "name": "AutoPraizler M.L.",
+  "url": "https://autopraizler.cz/",
+  "telephone": "+420728920290",
+  "email": "servis@autopraizler.cz",
+  "image": "https://autopraizler.cz/img/slider-1.jpg",
+  "logo": "https://autopraizler.cz/img/autopraizler-logo.svg",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "U Mlékárny 844/8a",
+    "postalCode": "353 01",
+    "addressLocality": "Mariánské Lázně",
+    "addressCountry": "CZ"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 49.9562,
+    "longitude": 12.69333
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "opens": "08:00",
+      "closes": "12:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "opens": "13:00",
+      "closes": "17:00"
+    }
+  ],
+  "sameAs": [
+    "https://www.facebook.com/people/AutoPraizler-ML/100064057664199/",
+    "https://www.firmy.cz/detail/2642756-autopraizler-marianske-lazne-usovice.html"
+  ]
+}
+</script>
 </head>
 <body>
 <a class="skip-link" href="#obsah">Přejít na obsah</a>
@@ -60,6 +120,7 @@
   <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 16V7h11v9M13 11h5l4 4v1M2 16h2m5 0h5m4 0h4"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/></symbol>
   <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3zM9 12l2 2 4-4"/></symbol>
   <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12 20 3m-3 3 3 3m-6 0 2 2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
 </svg>
 <div class="topbar">
   <div class="container">
@@ -67,6 +128,7 @@
     <span class="sep" aria-hidden="true">|</span>
     <a href="mailto:servis@autopraizler.cz"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mail"/></svg>servis@autopraizler.cz</a>
     <a class="social" href="https://www.facebook.com/AutoPraizler-ML-104299981555466" target="_blank" rel="noopener" aria-label="AutoPraizler M.L. na Facebooku"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-facebook"/></svg></a>
+    <a class="lang" href="/de/" lang="de" hreflang="de" title="Deutsche Version">DE</a>
   </div>
 </div>
 <header class="site-header">
@@ -110,12 +172,12 @@
 
 <section class="tiles" aria-label="Naše služby">
   <ul>
-    <li><a class="tile" href="/sluzby/"><img loading="lazy" src="/img/sluzba-pneuservis.jpg" alt="Pneuservis AutoPraizler M.L. – kolo na vyvažovačce v dílně" width="900" height="600"><span>Pneuservis - prodej pneu</span></a></li>
-    <li><a class="tile" href="/sluzby/"><img loading="lazy" src="/img/sluzba-klimatizace.jpg" alt="Servisní přístroj na klimatizace s manometry, hadice vedou do motorového prostoru" width="900" height="600"><span>Klimatizace a ozonová dezinfekce</span></a></li>
+    <li><a class="tile" href="/pneuservis/"><img loading="lazy" src="/img/sluzba-pneuservis.jpg" alt="Pneuservis AutoPraizler M.L. – kolo na vyvažovačce v dílně" width="900" height="600"><span>Pneuservis - prodej pneu</span></a></li>
+    <li><a class="tile" href="/klimatizace/"><img loading="lazy" src="/img/sluzba-klimatizace.jpg" alt="Servisní přístroj na klimatizace s manometry, hadice vedou do motorového prostoru" width="900" height="600"><span>Klimatizace a ozonová dezinfekce</span></a></li>
     <li><a class="tile" href="/sluzby/"><img loading="lazy" src="/img/sluzba-autoskla.jpg" alt="Dva mechanici v modrých rukavicích usazují čelní sklo do auta" width="900" height="600"><span>Autoskla + vyřízení pojistných událostí</span></a></li>
     <li><a class="tile" href="/sluzby/"><img loading="lazy" src="/img/sluzba-diagnostika.jpg" alt="Mechanik v modré vestě pracuje na notebooku u otevřené kapoty auta" width="900" height="600"><span>Elektro a diagnostika</span></a></li>
     <li><a class="tile" href="/sluzby/"><img loading="lazy" src="/img/sluzba-lakovani.jpg" alt="Ruka s leštičkou leští šedý lak auta u zrcátka" width="900" height="600"><span>Opravy karoserií - lakování</span></a></li>
-    <li><a class="tile" href="/sluzby/"><img loading="lazy" src="/img/sluzba-stk.jpg" alt="Mechanik pod zvednutým autem si baterkou prohlíží kolo a podvozek" width="900" height="600"><span>STK + emise, geometrie</span></a></li>
+    <li><a class="tile" href="/stk/"><img loading="lazy" src="/img/sluzba-stk.jpg" alt="Mechanik pod zvednutým autem si baterkou prohlíží kolo a podvozek" width="900" height="600"><span>STK + emise, geometrie</span></a></li>
   </ul>
 </section>
 
@@ -213,6 +275,45 @@
   </div>
 </section>
 
+<!-- Recenze: čísla (4,7 ★ / 80 recenzí na Googlu; 4,9 ★ a 4. místo mezi autoservisy v Mariánských Lázních na Firmy.cz) jsou ze dne 2. 10. 2026 a je potřeba je občas ručně aktualizovat. Citace jsou zkrácené z veřejných recenzí na Googlu, jména jen křestní + iniciála. -->
+<section class="section section--light reviews" aria-labelledby="recenze-nadpis">
+  <div class="container">
+    <h2 id="recenze-nadpis" class="reveal">Co říkají zákazníci</h2>
+    <div class="ratings reveal">
+      <div class="rating-badge"><span class="score">4,7 <span class="star" aria-hidden="true">★</span></span><span><span class="src">Google</span><span class="detail">80 recenzí</span></span></div>
+      <div class="rating-badge"><span class="score">4,9 <span class="star" aria-hidden="true">★</span></span><span><span class="src">Firmy.cz</span><span class="detail">4. místo v Mariánských Lázních</span></span></div>
+    </div>
+    <div class="quotes">
+      <blockquote class="reveal">
+        <span class="stars" aria-label="5 z 5 hvězdiček">★★★★★</span>
+        <p>Před hotelem Cristal se nám podařilo prorazit přední pneumatiku a recepce nám doporučila AutoPraizler. Pan majitel byl neskutečně vstřícný a náš problém operativně vyřešil k naprosté spokojenosti.</p>
+        <footer><b>Dagmar D.</b> · Google</footer>
+      </blockquote>
+      <blockquote class="reveal">
+        <span class="stars" aria-label="5 z 5 hvězdiček">★★★★★</span>
+        <p>Den před odjezdem z Mariánských Lázní nastal vážný problém s autem. Přestože byl víkend, odpověď zněla: nemějte obavy, vše vyřeším do hodiny, kdy musíte opustit hotel. Neuvěřitelně laskavý přístup.</p>
+        <footer><b>Jindřich W.</b> · Google</footer>
+      </blockquote>
+      <blockquote class="reveal">
+        <span class="stars" aria-label="5 z 5 hvězdiček">★★★★★</span>
+        <p>Ačkoliv jsem nedostala dobré zprávy o autu, vše mi bylo velice srozumitelně řečeno. Za mě fér jednání – když je jeden slušný, je i nepříjemná záležitost lepší.</p>
+        <footer><b>Tereza K.</b> · Google</footer>
+      </blockquote>
+    </div>
+    <div class="actions reveal">
+      <a class="btn" href="https://search.google.com/local/writereview?placeid=ChIJIWrwBBZ9oEcR06QpwFVfZq0" target="_blank" rel="noopener">Napsat recenzi na Google</a>
+      <a class="btn btn--outline" href="https://www.firmy.cz/detail/2642756-autopraizler-marianske-lazne-usovice.html" target="_blank" rel="noopener">Hodnocení na Firmy.cz</a>
+    </div>
+  </div>
+</section>
+
+<section id="aktuality" class="section aktuality" aria-label="Aktuality" hidden>
+  <div class="container">
+    <h2 class="aktuality__heading">AKTUALITY</h2>
+    <div class="aktuality__list"></div>
+    <p class="aktuality__more" hidden><a class="btn" href="/novinky/">Všechny aktuality</a></p>
+  </div>
+</section>
 <section class="section section--white gallery" aria-label="Galerie">
   <div class="container">
     <ul>
@@ -236,11 +337,18 @@
   </nav>
   <div class="copyright">
     <div class="container">
-      <span>© 2026 AutoPraizler M.L.</span><span class="sep" aria-hidden="true">|</span><a href="/ochrana-osobnich-udaju/">Ochrana osobních údajů</a>
+      <span>© 2026 AutoPraizler M.L.</span><span class="sep" aria-hidden="true">|</span><a href="/ochrana-osobnich-udaju/">Ochrana osobních údajů</a><span class="cookie-settings" hidden><span class="sep" aria-hidden="true">|</span><button type="button" class="link-btn">Nastavení cookies</button></span>
     </div>
   </div>
 </footer>
+<nav class="call-bar" aria-label="Rychlý kontakt (mobil)">
+  <a class="call-bar__call" href="tel:+420728920290"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg>Zavolat</a>
+  <a class="call-bar__book" href="/kontakt/#formular"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-calendar"/></svg>Objednat</a>
+</nav>
 <button class="to-top" type="button" aria-label="Zpět nahoru"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-chevron-up"/></svg></button>
 <script src="/js/main.js" defer></script>
+<script src="/js/novinky.js" defer></script>
+<script src="/js/config.js" defer></script>
+<script src="/js/mereni.js" defer></script>
 </body>
 </html>

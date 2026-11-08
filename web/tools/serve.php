@@ -27,6 +27,9 @@ if ($path === '/') {
         $page = null;
     } else {
         $page = $root . '/' . $slug . '.html';
+        if (!is_file($page) && is_file($root . '/' . $slug . '/index.html')) {
+            $page = $root . '/' . $slug . '/index.html'; // např. /admin/
+        }
     }
 }
 

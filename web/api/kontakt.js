@@ -6,6 +6,19 @@ const RATE_LIMIT = { max: 5, windowMs: 10 * 60 * 1000 };
 const rateMap = new Map(); // ip -> [timestamps]
 
 const GENERIC_ERROR = 'Zprávu se nepodařilo odeslat. Zavolejte nám prosím na +420 728 920 290.';
+const GENERIC_ERROR_DE = 'Die Nachricht konnte nicht gesendet werden. Bitte rufen Sie uns an: +420 728 920 290.';
+
+// Stránky, na které smí funkce po odeslání bez JavaScriptu přesměrovat (pole „zpet“ ve formuláři).
+const RETURN_PAGES = ['/kontakt/', '/pneuservis/', '/klimatizace/', '/stk/', '/de/'];
+
+function returnPage(fields) {
+  const z = fields && typeof fields === 'object' ? String(fields.zpet || '').trim() : '';
+  return RETURN_PAGES.includes(z) ? z : '/kontakt/';
+}
+
+function msg(ctx, cs, de) {
+  return ctx.zpet === '/de/' ? de : cs;
+}
 
 function escapeHtml(str) {
   return String(str)
@@ -92,17 +105,17 @@ function validate(fields) {
     website: str(fields.website, 200),
   };
   const errors = [];
-  if (data.jmeno.length < 2 || data.jmeno.length > 100) errors.push('Zadejte prosím jméno (2–100 znaků).');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email) || data.email.length > 150) errors.push('Zadejte prosím platný e-mail.');
-  if (data.zprava.length < 5 || data.zprava.length > 3000) errors.push('Zadejte prosím zprávu (5–3000 znaků).');
-  if (!data.souhlas) errors.push('Potvrďte prosím souhlas se zpracováním osobních údajů.');
+  if (data.jmeno.length < 2 || data.jmeno.length > 100) errors.push(['Zadejte prosím jméno (2–100 znaků).', 'Bitte geben Sie Ihren Namen ein (2–100 Zeichen).']);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email) || data.email.length > 150) errors.push(['Zadejte prosím platný e-mail.', 'Bitte geben Sie eine gültige E-Mail-Adresse ein.']);
+  if (data.zprava.length < 5 || data.zprava.length > 3000) errors.push(['Zadejte prosím zprávu (5–3000 znaků).', 'Bitte geben Sie eine Nachricht ein (5–3000 Zeichen).']);
+  if (!data.souhlas) errors.push(['Potvrďte prosím souhlas se zpracováním osobních údajů.', 'Bitte bestätigen Sie die Einwilligung zur Datenverarbeitung.']);
   return { data, errors };
 }
 
-function respond(res, status, payload, isForm, redirectOk) {
-  if (isForm) {
-    // odeslání bez JavaScriptu: zpět na stránku kontaktu s informací
-    const target = redirectOk ? '/kontakt/?odeslano=1#odeslano' : '/kontakt/?chyba=1#chyba';
+function respond(res, status, payload, ctx, redirectOk) {
+  if (ctx.isForm) {
+    // odeslání bez JavaScriptu: zpět na odesílající stránku s informací
+    const target = redirectOk ? `${ctx.zpet}?odeslano=1#odeslano` : `${ctx.zpet}?chyba=1#chyba`;
     res.statusCode = 303;
     res.setHeader('Location', target);
     res.setHeader('Cache-Control', 'no-store');
@@ -130,12 +143,13 @@ export default async function handler(req, res) {
   try {
     parsed = await parseBody(req);
   } catch {
-    respond(res, 400, { ok: false, error: 'Neplatný požadavek.' }, false, false);
+    respond(res, 400, { ok: false, error: 'Neplatný požadavek.' }, { isForm: false, zpet: '/kontakt/' }, false);
     return;
   }
   const { fields, isForm } = parsed;
+  const ctx = { isForm, zpet: returnPage(fields) };
   if (!fields || typeof fields !== 'object') {
-    respond(res, 400, { ok: false, error: 'Neplatný požadavek.' }, isForm, false);
+    respond(res, 400, { ok: false, error: msg(ctx, 'Neplatný požadavek.', 'Ungültige Anfrage.') }, ctx, false);
     return;
   }
 
@@ -143,18 +157,18 @@ export default async function handler(req, res) {
 
   // honeypot: roboti vyplní skryté pole; odpovíme „ok“, ale nic neodešleme
   if (data.website) {
-    respond(res, 200, { ok: true }, isForm, true);
+    respond(res, 200, { ok: true }, ctx, true);
     return;
   }
 
   if (errors.length) {
-    respond(res, 400, { ok: false, error: errors.join(' ') }, isForm, false);
+    respond(res, 400, { ok: false, error: errors.map((e) => msg(ctx, e[0], e[1])).join(' ') }, ctx, false);
     return;
   }
 
   const ip = clientIp(req);
   if (isRateLimited(ip)) {
-    respond(res, 429, { ok: false, error: 'Příliš mnoho požadavků. Zkuste to prosím později.' }, isForm, false);
+    respond(res, 429, { ok: false, error: msg(ctx, 'Příliš mnoho požadavků. Zkuste to prosím později.', 'Zu viele Anfragen. Bitte versuchen Sie es später erneut.') }, ctx, false);
     return;
   }
 
@@ -163,7 +177,7 @@ export default async function handler(req, res) {
   const from = process.env.CONTACT_FROM || 'AutoPraizler web <web@josefpavlovic.cz>';
   if (!apiKey || !to) {
     console.error('kontakt: chybí konfigurace (RESEND_API_KEY nebo CONTACT_TO)');
-    respond(res, 500, { ok: false, error: GENERIC_ERROR }, isForm, false);
+    respond(res, 500, { ok: false, error: msg(ctx, GENERIC_ERROR, GENERIC_ERROR_DE) }, ctx, false);
     return;
   }
 
@@ -177,7 +191,7 @@ export default async function handler(req, res) {
     data.zprava,
     '',
     `Souhlas se zpracováním osobních údajů: ano`,
-    `Odesláno z webu autopraizler.cz, IP ${ip}`,
+    `Odesláno z webu autopraizler.cz (stránka ${ctx.zpet}), IP ${ip}`,
   ];
   const text = lines.join('\n');
   const html =
@@ -189,7 +203,7 @@ export default async function handler(req, res) {
     `<tr><td style="padding:4px 12px 4px 0"><b>Požadavek termínu</b></td><td>${escapeHtml(data.termin || '-')}</td></tr>` +
     `</table>` +
     `<p style="font-family:Arial,sans-serif;font-size:15px;white-space:pre-wrap"><b>Zpráva:</b><br>${escapeHtml(data.zprava).replace(/\n/g, '<br>')}</p>` +
-    `<p style="font-family:Arial,sans-serif;font-size:12px;color:#666">Souhlas se zpracováním osobních údajů: ano. Odesláno z webu autopraizler.cz, IP ${escapeHtml(ip)}.</p>`;
+    `<p style="font-family:Arial,sans-serif;font-size:12px;color:#666">Souhlas se zpracováním osobních údajů: ano. Odesláno z webu autopraizler.cz (stránka ${escapeHtml(ctx.zpet)}), IP ${escapeHtml(ip)}.</p>`;
 
   const payload = {
     from,
@@ -213,14 +227,14 @@ export default async function handler(req, res) {
       let detail = '';
       try { detail = await r.text(); } catch { /* ignorujeme */ }
       console.error('kontakt: Resend odpověděl ' + r.status, detail.slice(0, 500));
-      respond(res, 502, { ok: false, error: GENERIC_ERROR }, isForm, false);
+      respond(res, 502, { ok: false, error: msg(ctx, GENERIC_ERROR, GENERIC_ERROR_DE) }, ctx, false);
       return;
     }
   } catch (err) {
     console.error('kontakt: odeslání selhalo', err && err.message);
-    respond(res, 502, { ok: false, error: GENERIC_ERROR }, isForm, false);
+    respond(res, 502, { ok: false, error: msg(ctx, GENERIC_ERROR, GENERIC_ERROR_DE) }, ctx, false);
     return;
   }
 
-  respond(res, 200, { ok: true }, isForm, true);
+  respond(res, 200, { ok: true }, ctx, true);
 }
