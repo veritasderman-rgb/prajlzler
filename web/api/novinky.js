@@ -146,19 +146,26 @@ async function updateNews(cfg, message, mutate) {
     throw new Error(`GitHub PUT ${MASTER_PATH} -> ${r.status}`);
   }
   if (!result) throw new Error('GitHub PUT: opakovaný konflikt');
-  result.publicChanged = await publishNews(cfg, result.items, message);
+  result.publicChanged = await publishNews(cfg, message);
   return result;
 }
 
-// Zapíše web/data/novinky.json jen se zveřejněnými položkami. Vrací true, když se soubor změnil.
-async function publishNews(cfg, items, message) {
-  const wanted = serialize(publicItems(items));
-  for (let attempt = 0; attempt < 2; attempt++) {
+// Srovná web/data/novinky.json s hlavním souborem: zapíše jen zveřejněné položky. Vrací true, když se
+// veřejný soubor změnil. Operace je idempotentní, takže po nezdařeném zápisu ji dokončí kterýkoli další
+// požadavek (včetně načtení administrace).
+// Pořadí čtení je důležité: NEJDŘÍV veřejný soubor (jeho sha), AŽ POTOM hlavní soubor. Každý zápis jde
+// vždy hlavní soubor -> veřejný soubor, takže když mezi naším čtením a zápisem někdo publikoval novější
+// stav, náš PUT narazí na jiné sha (konflikt) a opakování už načte aktuální obsah; a když jsme hlavní
+// soubor přečetli až po jeho změně, odvodíme rovnou nový stav. Starší snímek tak web nikdy nepřepíše.
+async function publishNews(cfg, message) {
+  for (let attempt = 0; attempt < 3; attempt++) {
     const existing = await ghGetFile(cfg, PUBLIC_PATH);
+    const { items } = await readNews(cfg);
+    const wanted = serialize(publicItems(items));
     if (existing && existing.content.equals(wanted)) return false;
     const r = await ghPutFile(cfg, PUBLIC_PATH, wanted, `${message} (web)`, existing ? existing.sha : undefined);
     if (r.ok) return true;
-    if (isConflict(r.status) && attempt === 0) continue;
+    if (isConflict(r.status) && attempt < 2) continue;
     throw new Error(`GitHub PUT ${PUBLIC_PATH} -> ${r.status}`);
   }
   throw new Error('GitHub PUT: opakovaný konflikt (veřejný soubor)');
@@ -255,6 +262,13 @@ function queryParam(req, name) {
 /* ---------- Operace ---------- */
 async function handleGet(cfg, res) {
   const { items } = await readNews(cfg);
+  // Načtení administrace zároveň dorovná veřejný soubor, kdyby předchozí zápis skončil v půli
+  // (hlavní soubor zapsán, veřejný ne). Neúspěch seznam neblokuje, jen se zaloguje.
+  try {
+    if (await publishNews(cfg, 'Aktuality: srovnání veřejného souboru')) console.warn('novinky: veřejný soubor dorovnán podle hlavního');
+  } catch (err) {
+    console.error('novinky: dorovnání veřejného souboru selhalo', err && err.message);
+  }
   sendJson(res, 200, { ok: true, items: sortItems(items) });
 }
 
@@ -309,12 +323,15 @@ async function handleDelete(cfg, req, res) {
   const id = str(queryParam(req, 'id'), 60);
   if (!ID_RE.test(id)) throw new UserError(MSG.badRequest);
 
+  // Mazání je idempotentní: když položka v hlavním souboru už není (např. opakování po částečném
+  // selhání), jen se dorovná veřejný soubor a odpoví se úspěchem.
   let removed = null;
   const result = await updateNews(cfg, `Aktuality: smazáno ${id}`, (items) => {
     const idx = items.findIndex((it) => it.id === id);
-    if (idx === -1) throw new UserError('Aktualita už neexistuje. Obnovte prosím stránku.', 404);
-    removed = items[idx];
-    items.splice(idx, 1);
+    if (idx >= 0) {
+      removed = items[idx];
+      items.splice(idx, 1);
+    }
     return { items };
   });
 

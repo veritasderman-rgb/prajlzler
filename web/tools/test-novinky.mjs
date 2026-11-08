@@ -55,7 +55,7 @@ async function run(handler, reqOpts) {
 
 /* ---------- Falešný fetch: Resend + GitHub contents API ---------- */
 const calls = [];
-const github = { files: new Map(), conflictOnce: false }; // path -> { sha, content: Buffer }
+const github = { files: new Map(), conflictOnce: false, failPutOnce: null }; // path -> { sha, content: Buffer }
 let shaCounter = 0;
 const newSha = () => 'sha' + String(++shaCounter).padStart(4, '0');
 
@@ -86,6 +86,7 @@ globalThis.fetch = async (url, opts = {}) => {
       if (file && body.sha !== file.sha) return json(409, { message: 'sha mismatch' });
       if (!file && body.sha) return json(422, { message: 'sha given for new file' });
       if (github.conflictOnce) { github.conflictOnce = false; return json(409, { message: 'simulated conflict' }); }
+      if (github.failPutOnce && path === github.failPutOnce) { github.failPutOnce = null; return json(500, { message: 'simulated outage' }); }
       const entry = { sha: newSha(), content: Buffer.from(body.content, 'base64') };
       github.files.set(path, entry);
       return json(file ? 200 : 201, { content: { sha: entry.sha }, commit: { sha: 'c' + entry.sha } });
@@ -394,7 +395,8 @@ let imageItemId;
   const res = await run(novinky, { method: 'POST', body: { nadpis: 'Po konfliktu', datum: '2026-11-10', text: 'T', publikovano: true }, headers: { cookie, ...csrf } });
   assert.equal(res.statusCode, 200, res.body);
   assert.equal(ghCalls('PUT', MASTER).length, 2, 'po 409 následuje druhý PUT');
-  assert.equal(ghCalls('GET', MASTER).length, 2, 'před druhým PUT se soubor znovu načte');
+  assert.equal(ghCalls('GET', MASTER).length, 3, 'před druhým PUT se soubor znovu načte; publikace čte hlavní soubor znovu');
+  assert.equal(ghCalls('GET', PUBLIC).length, 1);
   assert.equal(ghCalls('PUT', PUBLIC).length, 1, 'veřejný soubor se zapíše jednou');
   assert.equal(readNews().items[0].nadpis, 'Po konfliktu');
   assert.equal(readPublic().items[0].nadpis, 'Po konfliktu');
@@ -427,9 +429,95 @@ let imageItemId;
   assert.equal(ghPath(del[0].url), `web/data/obrazky/${id}.jpg`);
   assert.ok(del[0].body.sha);
 
-  assert.equal((await run(novinky, { method: 'DELETE', url: '/api/novinky?id=2026-01-01-neexist', headers: { cookie, ...csrf } })).statusCode, 404);
+  calls.length = 0;
+  const again = await run(novinky, { method: 'DELETE', url: '/api/novinky?id=2026-01-01-neexist', headers: { cookie, ...csrf } });
+  assert.equal(again.statusCode, 200, 'mazání je idempotentní');
+  assert.equal(ghCalls('PUT', PUBLIC).length, 0, 'beze změny se veřejný soubor nepřepisuje');
   assert.equal((await run(novinky, { method: 'DELETE', url: '/api/novinky?id=../../etc', headers: { cookie, ...csrf } })).statusCode, 400);
-  console.log('OK  novinky DELETE -> položka i obrázek pryč, CSRF 403, neznámé id 404');
+  console.log('OK  novinky DELETE -> položka i obrázek pryč, CSRF 403, opakované smazání 200');
+}
+
+// 16b) částečné selhání: hlavní soubor zapsán, veřejný ne -> 502; další požadavek (GET administrace
+//      nebo opakované DELETE) veřejný soubor dorovná
+{
+  const created = await run(novinky, { method: 'POST', body: { nadpis: 'Částečné selhání', datum: '2026-11-13', text: 'T', publikovano: true }, headers: { cookie, ...csrf } });
+  const id = created.json.item.id;
+  assert.ok(readPublic().items.some((it) => it.id === id));
+  github.failPutOnce = PUBLIC;
+  const res = await run(novinky, { method: 'DELETE', url: `/api/novinky?id=${id}`, headers: { cookie, ...csrf } });
+  assert.equal(res.statusCode, 502);
+  assert.ok(!readNews().items.some((it) => it.id === id), 'v hlavním souboru už není');
+  assert.ok(readPublic().items.some((it) => it.id === id), 'veřejný soubor zatím zůstal starý');
+  const list = await run(novinky, { method: 'GET', headers: { cookie } });
+  assert.equal(list.statusCode, 200);
+  assert.ok(!list.json.items.some((it) => it.id === id));
+  assert.ok(!readPublic().items.some((it) => it.id === id), 'GET administrace veřejný soubor dorovnal');
+  // totéž přes opakované DELETE
+  const created2 = await run(novinky, { method: 'POST', body: { nadpis: 'Částečné selhání 2', datum: '2026-11-13', text: 'T', publikovano: true }, headers: { cookie, ...csrf } });
+  const id2 = created2.json.item.id;
+  github.failPutOnce = PUBLIC;
+  assert.equal((await run(novinky, { method: 'DELETE', url: `/api/novinky?id=${id2}`, headers: { cookie, ...csrf } })).statusCode, 502);
+  assert.ok(readPublic().items.some((it) => it.id === id2));
+  const retry = await run(novinky, { method: 'DELETE', url: `/api/novinky?id=${id2}`, headers: { cookie, ...csrf } });
+  assert.equal(retry.statusCode, 200);
+  assert.equal(retry.json.message, 'Smazáno. Z webu zmizí do minuty až dvou.');
+  assert.ok(!readPublic().items.some((it) => it.id === id2), 'opakované DELETE dokončí odstranění z webu');
+  console.log('OK  novinky částečné selhání -> dorovnání přes GET i opakované DELETE');
+}
+
+// 16c) publikace čte hlavní soubor znovu: když ho mezitím změnil jiný požadavek, web dostane novější stav
+{
+  const created = await run(novinky, { method: 'POST', body: { nadpis: 'Souběh', datum: '2026-11-14', text: 'T', publikovano: true }, headers: { cookie, ...csrf } });
+  const id = created.json.item.id;
+  // simulace: po zápisu hlavního souboru požadavkem A jiný požadavek B položku skryl (přímo v „GitHubu“)
+  const origGet = globalThis.fetch;
+  let injected = false;
+  globalThis.fetch = async (url, opts = {}) => {
+    const r = await origGet(url, opts);
+    if (!injected && (opts.method || 'GET') === 'PUT' && ghPath(url) === MASTER) {
+      injected = true;
+      const cur = readNews();
+      cur.items = cur.items.map((it) => (it.id === id ? { ...it, publikovano: false } : it));
+      seedFile(MASTER, cur.items);
+    }
+    return r;
+  };
+  const res = await run(novinky, { method: 'POST', body: { id, nadpis: 'Souběh (A)', datum: '2026-11-14', text: 'T2', publikovano: true }, headers: { cookie, ...csrf } });
+  globalThis.fetch = origGet;
+  assert.equal(res.statusCode, 200, res.body);
+  assert.ok(!readPublic().items.some((it) => it.id === id), 'veřejný soubor odpovídá novějšímu stavu hlavního souboru (skryto), ne staršímu snímku požadavku A');
+  console.log('OK  novinky publikace vychází z aktuálního hlavního souboru');
+}
+
+// 16d) souběh GET administrace × skrytí položky: dorovnání nesmí vrátit skrytou položku na web.
+//      Dvě prokládání: skrytí proběhne (a) mezi čtením veřejného a hlavního souboru, (b) mezi čtením
+//      hlavního souboru a zápisem veřejného.
+for (const when of ['after-public-read', 'after-master-read']) {
+  const created = await run(novinky, { method: 'POST', body: { nadpis: 'Souběh GET ' + when, datum: '2026-11-15', text: 'T', publikovano: true }, headers: { cookie, ...csrf } });
+  const id = created.json.item.id;
+  assert.ok(readPublic().items.some((it) => it.id === id));
+  const origFetch = globalThis.fetch;
+  let injected = false;
+  const hideDirectly = () => {
+    // jiný požadavek skryl položku a publikoval: hlavní i veřejný soubor dostanou nový obsah a sha
+    const cur = readNews().items.map((it) => (it.id === id ? { ...it, publikovano: false } : it));
+    seedFile(MASTER, cur); seedFile(PUBLIC, cur.filter((it) => it.publikovano === true));
+  };
+  globalThis.fetch = async (url, opts = {}) => {
+    const method = opts.method || 'GET';
+    const path = url.startsWith('https://api.github.com/') ? ghPath(url.split('?')[0]) : '';
+    const r = await origFetch(url, opts);
+    if (!injected && method === 'GET' && path === (when === 'after-public-read' ? PUBLIC : MASTER)) { injected = true; hideDirectly(); }
+    return r;
+  };
+  calls.length = 0;
+  const list = await run(novinky, { method: 'GET', headers: { cookie } });
+  globalThis.fetch = origFetch;
+  assert.equal(list.statusCode, 200);
+  assert.ok(injected, 'simulace skrytí proběhla');
+  assert.ok(!readPublic().items.some((it) => it.id === id), `(${when}) skrytá položka se nesmí vrátit na web`);
+  assert.ok(!ghCalls('PUT', PUBLIC).some((c) => Buffer.from(c.body.content, 'base64').toString('utf8').includes(id)), 'starší snímek se nikdy nezapsal');
+  console.log('OK  novinky souběh GET × skrytí (' + when + ') -> web zůstává bez skryté položky');
 }
 
 // 17) chybějící GITHUB_TOKEN -> 500 s obecnou hláškou (bez názvu proměnné); PUT -> 405

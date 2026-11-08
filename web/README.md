@@ -124,6 +124,47 @@ h.seznam.cz). Pokud by GA4 posílala data na regionální endpoint
 (`region1.google-analytics.com`), je potřeba ho do `connect-src` doplnit.
 Popis měření pro návštěvníky je v článku 10 zásad zpracování osobních údajů.
 
+## SEO a GEO (vyhledávače, lokální cílení, AI asistenti)
+
+Web je optimalizovaný pro klasické vyhledávače (Google, Seznam), pro lokální
+dotazy typu „pneuservis Mariánské Lázně“ a pro AI asistenty, které odpovídají
+s odkazem na zdroj (GEO, generative engine optimization). Všechna fakta
+pocházejí z textů webu a ceníku; nic se nedomýšlí.
+
+- **Metadata**: každá stránka má unikátní `<title>` do 60 znaků a popis do
+  155 znaků s místem a telefonem, canonical, Open Graph a Twitter card
+  (vstupní stránky mají vlastní obrázek), hreflang cs/de na úvodu a `/de/`,
+  geo meta (`geo.region`, `geo.position`, `ICBM`).
+- **Strukturovaná data** (JSON-LD, `@graph`): úvod `AutoRepair` (adresa, GPS,
+  otevírací doba, mapa, katalog služeb, kontaktní místo, jazyky) + `WebSite`
+  + `WebPage`; podstránky `BreadcrumbList`; `/pneuservis/`, `/klimatizace/`,
+  `/stk/` a `/de/` navíc `Service` s nabídkou „již od“ cen z tabulky na stránce
+  a `FAQPage`; `/cenik/` `OfferCatalog`; `/sluzby/` `ItemList`; `/kontakt/`
+  `ContactPage`. Hodnocení (`aggregateRating`) záměrně chybí, Google je u
+  vlastních recenzí na webu firmy nepovoluje.
+- **Časté dotazy**: viditelné sekce FAQ (rozbalovací `<details>`) na vstupních
+  stránkách a na `/de/` odpovídají přesně na otázky, které lidé kladou
+  vyhledávačům i AI asistentům; odpovědi vždy obsahují název firmy, místo a
+  cenu „od“ z ceníku. Stejný obsah je ve `FAQPage`.
+- **Interní odkazy**: dlaždice na úvodu, seznam služeb na `/sluzby/` i boxy
+  „Další služby“ na vstupních stránkách vedou na `/pneuservis/`,
+  `/klimatizace/`, `/stk/`. V patičce každé stránky je adresa, telefon a
+  e-mail (konzistentní NAP pro lokální SEO).
+- **Pro AI asistenty**: `llms.txt` v kořeni webu shrnuje firmu, služby, ceny,
+  otevírací dobu a stránky v prostém Markdownu; `robots.txt` výslovně
+  povoluje GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended
+  a Applebot (a zakazuje `/api/` a `/admin/`).
+- **Technika**: fonty jsou vlastní s `font-display: swap` a preloadem, obrázky
+  mají rozměry (žádný posun layoutu), ty pod ohybem `loading="lazy"`, hlavní
+  obrázek `fetchpriority="high"`; sitemap má `lastmod` a hreflang alternativy.
+
+Co SEO ještě zlepší, ale vyžaduje rozhodnutí majitele nebo data, která nemáme:
+H1 na úvodu „VÁŠ AUTOSERVIS!“ je převzato ze starého webu a klíčové slovo
+nenese; založení/aktualizace Firemního profilu Google se stejným NAP a
+otevírací dobou; potvrzení otevírací doby; rok založení firmy do schématu;
+tvrzení na `/de/` (platba kartou, jazyky personálu, parkování, dvě minuty od
+nádraží) nejsou doložena v podkladech a je třeba je s majitelem potvrdit.
+
 ## Lokální náhled
 
 Nejjednodušší (odkazy typu `/sluzby/` ale nefungují, stránky otevírejte jako `/sluzby.html`):
@@ -282,6 +323,11 @@ web/
   odstraní z obou JSONů a smaže i soubor fotky.
 - Pokud hlavní soubor `obsah/aktuality/novinky.json` neexistuje (první
   nasazení), funkce převezme položky z veřejného souboru a hlavní založí.
+- Veřejný soubor se vždy odvozuje z **čerstvě načteného** hlavního souboru,
+  ne z dat požadavku, a jeho zápis je idempotentní: když zápis hlavního
+  souboru projde a veřejného ne (výpadek GitHubu), dorovná ho kterýkoli
+  další požadavek, včetně pouhého načtení seznamu v administraci. Smazání
+  už neexistující položky vrací úspěch a jen dorovná veřejný soubor.
 - Repozitář je veřejný, takže skryté návrhy jsou technicky vidět na GitHubu
   (a jejich fotky na `/data/obrazky/`, i když na ně web neodkazuje). Na webu
   samotném se nezobrazují. Do aktualit proto nepatří nic důvěrného.

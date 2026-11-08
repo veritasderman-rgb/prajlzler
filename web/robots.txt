@@ -1,5 +1,10 @@
+# autopraizler.cz – pravidla pro roboty
+# Jedna skupina pro všechny roboty včetně AI asistentů (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot,
+# Google-Extended, Applebot...): web smějí procházet celý kromě funkcí a administrace.
+# Pojmenované skupiny záměrně nejsou: podle RFC 9309 by nahradily tuto skupinu i s jejími zákazy.
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /admin/
 
 Sitemap: https://autopraizler.cz/sitemap.xml
