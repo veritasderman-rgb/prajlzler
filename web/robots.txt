@@ -1,5 +1,29 @@
+# autopraizler.cz – pravidla pro roboty
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /admin/
+
+# Vyhledávače a AI asistenti (odpovědi s odkazem na zdroj) mohou web procházet.
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+User-agent: SeznamBot
+Allow: /
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot
+Allow: /
 
 Sitemap: https://autopraizler.cz/sitemap.xml
