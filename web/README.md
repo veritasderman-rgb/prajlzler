@@ -138,14 +138,17 @@ pocházejí z textů webu a ceníku; nic se nedomýšlí.
 - **Strukturovaná data** (JSON-LD, `@graph`): úvod `AutoRepair` (adresa, GPS,
   otevírací doba, mapa, katalog služeb, kontaktní místo, jazyky) + `WebSite`
   + `WebPage`; podstránky `BreadcrumbList`; `/pneuservis/`, `/klimatizace/`,
-  `/stk/` a `/de/` navíc `Service` s nabídkou „již od“ cen z tabulky na stránce
-  a `FAQPage`; `/cenik/` `OfferCatalog`; `/sluzby/` `ItemList`; `/kontakt/`
-  `ContactPage`. Hodnocení (`aggregateRating`) záměrně chybí, Google je u
+  `/stk/` a `/de/` navíc `Service` a `FAQPage`; `/sluzby/` `ItemList`;
+  `/kontakt/` `ContactPage`. Hodnocení (`aggregateRating`) záměrně chybí, Google je u
   vlastních recenzí na webu firmy nepovoluje.
 - **Časté dotazy**: viditelné sekce FAQ (rozbalovací `<details>`) na vstupních
   stránkách a na `/de/` odpovídají přesně na otázky, které lidé kladou
-  vyhledávačům i AI asistentům; odpovědi vždy obsahují název firmy, místo a
-  cenu „od“ z ceníku. Stejný obsah je ve `FAQPage`.
+  vyhledávačům i AI asistentům; odpovědi vždy obsahují název firmy a místo.
+  Stejný obsah je ve `FAQPage`.
+- **Ceny záměrně nikde mimo stránku Ceník**: v popisech, FAQ, strukturovaných
+  datech, `llms.txt` ani na vstupních stránkách nejsou konkrétní částky. Cena
+  je citlivý údaj a stanovuje se až po prohlídce vozu; texty to říkají a
+  odkazují na orientační ceník.
 - **Interní odkazy**: dlaždice na úvodu, seznam služeb na `/sluzby/` i boxy
   „Další služby“ na vstupních stránkách vedou na `/pneuservis/`,
   `/klimatizace/`, `/stk/`. V patičce každé stránky je adresa, telefon a
