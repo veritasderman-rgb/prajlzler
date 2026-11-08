@@ -232,14 +232,13 @@ svg.icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-wid
 }
 
 /* ---------- Dlaždice služeb ---------- */
-/* Dlaždice služeb: oddělené od hero fotky šedým pruhem s odsazením a mezerami, popisek na plném
-   tmavém pruhu pod fotkou (ne přes ni), aby text ani fotky nesplývaly s hlavní fotkou nad nimi. */
-.tiles { background: var(--grey-light); padding: 28px 0 32px; border-top: 4px solid var(--red); }
-.tiles ul { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+/* Dlaždice služeb: přes celou šířku obrazovky bez okrajů jako na původním webu. Od hero fotky je
+   odděluje červená linka a popisek je na plném tmavém pruhu pod fotkou (ne přes ni), aby byl čitelný. */
+.tiles { background: var(--grey-dark); border-top: 4px solid var(--red); }
+.tiles ul { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; background: var(--grey-dark); }
 .tiles li { min-width: 0; display: flex; } /* všechny dlaždice v řádku stejně vysoké */
 .tiles li .tile { flex: 1; width: 100%; }
-.tile { position: relative; display: flex; flex-direction: column; text-decoration: none; color: #fff; background: var(--grey-dark); overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,.14); transition: transform .25s ease, box-shadow .25s ease; }
-.tile:hover, .tile:focus-visible { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(0,0,0,.2); }
+.tile { position: relative; display: flex; flex-direction: column; text-decoration: none; color: #fff; background: var(--grey-dark); overflow: hidden; }
 .tile img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; transition: transform .5s ease; }
 .tile:hover img, .tile:focus-visible img { transform: scale(1.06); }
 .tile span {
@@ -248,9 +247,9 @@ svg.icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-wid
   background: var(--grey-dark); border-top: 3px solid var(--red); transition: background .25s ease;
 }
 .tile:hover span, .tile:focus-visible span { background: var(--red); }
-.tile:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+.tile:focus-visible { outline: 3px solid #fff; outline-offset: -3px; }
 @media (max-width: 1000px) { .tiles ul { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 520px) { .tiles { padding: 18px 0 22px; } .tiles ul { grid-template-columns: repeat(2, 1fr); gap: 10px; } .tile span { font-size: 13px; min-height: 58px; } }
+@media (max-width: 520px) { .tiles ul { grid-template-columns: repeat(2, 1fr); } .tile span { font-size: 13px; min-height: 58px; } }
 
 /* ---------- Partneři ---------- */
 .partners .grid { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 36px; align-items: start; }
