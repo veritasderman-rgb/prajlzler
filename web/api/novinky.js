@@ -151,18 +151,21 @@ async function updateNews(cfg, message, mutate) {
 }
 
 // Srovná web/data/novinky.json s hlavním souborem: zapíše jen zveřejněné položky. Vrací true, když se
-// veřejný soubor změnil. Hlavní soubor čte vždy znovu (ne z paměti požadavku), aby pomalejší požadavek
-// nepřepsal web starším stavem; při konfliktu obě strany načte znovu. Operace je idempotentní, takže
-// po nezdařeném zápisu ji dokončí kterýkoli další požadavek (včetně načtení administrace).
-async function publishNews(cfg, message, knownItems) {
-  for (let attempt = 0; attempt < 2; attempt++) {
-    const items = attempt === 0 && knownItems ? knownItems : (await readNews(cfg)).items;
-    const wanted = serialize(publicItems(items));
+// veřejný soubor změnil. Operace je idempotentní, takže po nezdařeném zápisu ji dokončí kterýkoli další
+// požadavek (včetně načtení administrace).
+// Pořadí čtení je důležité: NEJDŘÍV veřejný soubor (jeho sha), AŽ POTOM hlavní soubor. Každý zápis jde
+// vždy hlavní soubor -> veřejný soubor, takže když mezi naším čtením a zápisem někdo publikoval novější
+// stav, náš PUT narazí na jiné sha (konflikt) a opakování už načte aktuální obsah; a když jsme hlavní
+// soubor přečetli až po jeho změně, odvodíme rovnou nový stav. Starší snímek tak web nikdy nepřepíše.
+async function publishNews(cfg, message) {
+  for (let attempt = 0; attempt < 3; attempt++) {
     const existing = await ghGetFile(cfg, PUBLIC_PATH);
+    const { items } = await readNews(cfg);
+    const wanted = serialize(publicItems(items));
     if (existing && existing.content.equals(wanted)) return false;
     const r = await ghPutFile(cfg, PUBLIC_PATH, wanted, `${message} (web)`, existing ? existing.sha : undefined);
     if (r.ok) return true;
-    if (isConflict(r.status) && attempt === 0) continue;
+    if (isConflict(r.status) && attempt < 2) continue;
     throw new Error(`GitHub PUT ${PUBLIC_PATH} -> ${r.status}`);
   }
   throw new Error('GitHub PUT: opakovaný konflikt (veřejný soubor)');
@@ -262,7 +265,7 @@ async function handleGet(cfg, res) {
   // Načtení administrace zároveň dorovná veřejný soubor, kdyby předchozí zápis skončil v půli
   // (hlavní soubor zapsán, veřejný ne). Neúspěch seznam neblokuje, jen se zaloguje.
   try {
-    if (await publishNews(cfg, 'Aktuality: srovnání veřejného souboru', items)) console.warn('novinky: veřejný soubor dorovnán podle hlavního');
+    if (await publishNews(cfg, 'Aktuality: srovnání veřejného souboru')) console.warn('novinky: veřejný soubor dorovnán podle hlavního');
   } catch (err) {
     console.error('novinky: dorovnání veřejného souboru selhalo', err && err.message);
   }

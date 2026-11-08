@@ -1,29 +1,10 @@
 # autopraizler.cz – pravidla pro roboty
+# Jedna skupina pro všechny roboty včetně AI asistentů (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot,
+# Google-Extended, Applebot...): web smějí procházet celý kromě funkcí a administrace.
+# Pojmenované skupiny záměrně nejsou: podle RFC 9309 by nahradily tuto skupinu i s jejími zákazy.
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin/
-
-# Vyhledávače a AI asistenti (odpovědi s odkazem na zdroj) mohou web procházet.
-User-agent: Googlebot
-Allow: /
-User-agent: Bingbot
-Allow: /
-User-agent: SeznamBot
-Allow: /
-User-agent: GPTBot
-Allow: /
-User-agent: OAI-SearchBot
-Allow: /
-User-agent: ChatGPT-User
-Allow: /
-User-agent: ClaudeBot
-Allow: /
-User-agent: PerplexityBot
-Allow: /
-User-agent: Google-Extended
-Allow: /
-User-agent: Applebot
-Allow: /
 
 Sitemap: https://autopraizler.cz/sitemap.xml

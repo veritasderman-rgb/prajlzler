@@ -396,6 +396,7 @@ let imageItemId;
   assert.equal(res.statusCode, 200, res.body);
   assert.equal(ghCalls('PUT', MASTER).length, 2, 'po 409 následuje druhý PUT');
   assert.equal(ghCalls('GET', MASTER).length, 3, 'před druhým PUT se soubor znovu načte; publikace čte hlavní soubor znovu');
+  assert.equal(ghCalls('GET', PUBLIC).length, 1);
   assert.equal(ghCalls('PUT', PUBLIC).length, 1, 'veřejný soubor se zapíše jednou');
   assert.equal(readNews().items[0].nadpis, 'Po konfliktu');
   assert.equal(readPublic().items[0].nadpis, 'Po konfliktu');
@@ -486,6 +487,37 @@ let imageItemId;
   assert.equal(res.statusCode, 200, res.body);
   assert.ok(!readPublic().items.some((it) => it.id === id), 'veřejný soubor odpovídá novějšímu stavu hlavního souboru (skryto), ne staršímu snímku požadavku A');
   console.log('OK  novinky publikace vychází z aktuálního hlavního souboru');
+}
+
+// 16d) souběh GET administrace × skrytí položky: dorovnání nesmí vrátit skrytou položku na web.
+//      Dvě prokládání: skrytí proběhne (a) mezi čtením veřejného a hlavního souboru, (b) mezi čtením
+//      hlavního souboru a zápisem veřejného.
+for (const when of ['after-public-read', 'after-master-read']) {
+  const created = await run(novinky, { method: 'POST', body: { nadpis: 'Souběh GET ' + when, datum: '2026-11-15', text: 'T', publikovano: true }, headers: { cookie, ...csrf } });
+  const id = created.json.item.id;
+  assert.ok(readPublic().items.some((it) => it.id === id));
+  const origFetch = globalThis.fetch;
+  let injected = false;
+  const hideDirectly = () => {
+    // jiný požadavek skryl položku a publikoval: hlavní i veřejný soubor dostanou nový obsah a sha
+    const cur = readNews().items.map((it) => (it.id === id ? { ...it, publikovano: false } : it));
+    seedFile(MASTER, cur); seedFile(PUBLIC, cur.filter((it) => it.publikovano === true));
+  };
+  globalThis.fetch = async (url, opts = {}) => {
+    const method = opts.method || 'GET';
+    const path = url.startsWith('https://api.github.com/') ? ghPath(url.split('?')[0]) : '';
+    const r = await origFetch(url, opts);
+    if (!injected && method === 'GET' && path === (when === 'after-public-read' ? PUBLIC : MASTER)) { injected = true; hideDirectly(); }
+    return r;
+  };
+  calls.length = 0;
+  const list = await run(novinky, { method: 'GET', headers: { cookie } });
+  globalThis.fetch = origFetch;
+  assert.equal(list.statusCode, 200);
+  assert.ok(injected, 'simulace skrytí proběhla');
+  assert.ok(!readPublic().items.some((it) => it.id === id), `(${when}) skrytá položka se nesmí vrátit na web`);
+  assert.ok(!ghCalls('PUT', PUBLIC).some((c) => Buffer.from(c.body.content, 'base64').toString('utf8').includes(id)), 'starší snímek se nikdy nezapsal');
+  console.log('OK  novinky souběh GET × skrytí (' + when + ') -> web zůstává bez skryté položky');
 }
 
 // 17) chybějící GITHUB_TOKEN -> 500 s obecnou hláškou (bez názvu proměnné); PUT -> 405
