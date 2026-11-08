@@ -1,6 +1,6 @@
 # AutoPraizler M.L. – autoservis a pneuservis Mariánské Lázně
 
-> Víceznačkový autoservis a pneuservis v Mariánských Lázních (Karlovarský kraj, Česko). Opravy, prohlídky a údržba osobních, dodávkových a nákladních vozidel do výšky 3,3 m, STK a emise na klíč, servis klimatizace, diagnostika, autoskla, karosárna a lak, geometrie náprav, odtahová služba. Pomáháme i hostům lázní a lidem na cestách (německá stránka /de/).
+> Víceznačkový autoservis a pneuservis v Mariánských Lázních (Karlovarský kraj, Česko). Opravy, prohlídky a údržba osobních, dodávkových a nákladních vozidel do výšky 3,3 m, STK a emise na klíč, servis klimatizace, diagnostika, autoskla, karosárna a lak, geometrie náprav, odtahová služba. Pomáháme i hostům lázní a lidem na cestách (německá stránka /de/, anglická /en/).
 
 ## Základní údaje
 
@@ -10,7 +10,7 @@
 - Telefon: +420 728 920 290
 - E-mail: servis@autopraizler.cz
 - Otevírací doba: pondělí–pátek 8.00–17.00 (polední pauza 12.00–13.00), sobota–neděle po telefonické dohodě
-- Jazyky webu: čeština, němčina
+- Jazyky webu: čeština, němčina, angličtina
 - Web: https://autopraizler.cz/
 
 ## Služby
@@ -30,4 +30,5 @@ Cenu každé opravy stanovíme až po prohlídce vozu podle jeho stavu a nároč
 - [Ušetřete za servis](https://autopraizler.cz/usetrete/): díly kvalitou srovnatelné s originálními, levnější až o 60 %
 - [Kontakt a objednávka](https://autopraizler.cz/kontakt/): adresa, otevírací doba, mapa, poptávkový formulář
 - [Pannenhilfe für Kurgäste (deutsch)](https://autopraizler.cz/de/)
+- [Breakdown help for spa guests (English)](https://autopraizler.cz/en/)
 - [Aktuality](https://autopraizler.cz/novinky/)

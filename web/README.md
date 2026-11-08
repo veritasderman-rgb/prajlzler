@@ -168,6 +168,41 @@ otevírací dobou; potvrzení otevírací doby; rok založení firmy do schémat
 tvrzení na `/de/` (platba kartou, jazyky personálu, parkování, dvě minuty od
 nádraží) nejsou doložena v podkladech a je třeba je s majitelem potvrdit.
 
+## Společné části stránek (hlavička, patička, ikony)
+
+Stránky jsou statické HTML, ale hlavička, horní lišta, patička, sada SVG ikon
+a společná část `<head>` jsou jen v `tools/partials/` a do stránek je vkládá
+`node tools/build.mjs`. Stránka má místo označené dvojicí komentářů, např.
+`<!-- @header --> … <!-- /header -->`; obsah mezi nimi build přepíše.
+Partial se hledá jako `<název>-<jazyk>.html` podle `<html lang>` (cs, de, en),
+jinak `<název>.html`. Aktivní položku menu (`aria-current`) doplní build podle
+`<link rel="canonical">`.
+
+- Změna menu nebo patičky: upravit soubor v `tools/partials/`, spustit
+  `node tools/build.mjs`, commitnout změněné stránky i partial.
+- `node tools/build.mjs --check` nic nezapisuje, jen ohlásí stránky, které
+  neodpovídají partials (hodí se před commitem).
+- Administrace (`admin/`) má vlastní hlavičku a do skládání nevstupuje.
+
+## Jazykové verze
+
+Česky je celý web. Německá stránka `/de/` a anglická `/en/` jsou jednostránkové
+verze pro hosty lázní (pomoc při poruše, služby, kontakt, formulář) se stejnou
+strukturou; mají vlastní hlavičku a patičku (`header-de`, `footer-de`,
+`header-en`, `footer-en`), hreflang na úvodu i mezi sebou a přepínač jazyků
+v horní liště. Formulář z nich posílá `zpet=/de/` nebo `/en/`, podle toho
+`api/kontakt.js` volí jazyk hlášek a stránku pro návrat bez JavaScriptu;
+`js/mereni.js` volí jazyk cookie lišty podle `<html lang>`.
+
+## Responzivní obrázky
+
+`python3 tools/obrazky.py` vytvoří k velkým fotkám WebP varianty
+(`img/<název>-<šířka>.webp`) a v HTML obalí `<img>` do `<picture>` se `srcset`
+a `sizes` podle místa použití (slider 100vw, dlaždice, galerie, vstupní
+stránky). Původní JPEG zůstává jako záloha. Po přidání nové fotky stačí
+doplnit ji do `VARIANTS` ve skriptu a skript spustit; už obalené obrázky
+přeskočí.
+
 ## Lokální náhled
 
 Nejjednodušší (odkazy typu `/sluzby/` ale nefungují, stránky otevírejte jako `/sluzby.html`):

@@ -121,14 +121,15 @@ Dokud jsou ID prázdná, web nic neměří a neukazuje cookie lištu.
 
 ## 8. Otázky a rozhodnutí pro Jardu
 
-- **Otevírací doba**: web uvádí Po–Pá 8–12 a 13–17, So–Ne po dohodě
-  (převzato ze starého webu). Platí?
+- **Otevírací doba**: Po–Pá 8–12 a 13–17, So–Ne po dohodě. Potvrzeno 8. 11. 2026.
 - **Ceník**: ceny jsou teď jen na stránce Ceník (1:1 ze starého webu, včetně
   PDF). Nechat, nebo stránku stáhnout a nechat jen „cenu řekneme po
   prohlídce“?
-- **Německá stránka** `/de/` tvrdí: platba kartou i hotově, personál mluví
-  německy a anglicky, parkování před dílnou, dvě minuty od nádraží. Nic z toho
-  není v podkladech. Potvrdit, nebo smazat.
+- **Německá a anglická stránka** (`/de/`, `/en/`): platba kartou i hotově,
+  personál mluví německy a anglicky, parkování před dílnou, dvě minuty od
+  nádraží. Potvrzeno 8. 11. 2026.
+- **Povinné údaje podnikatele** (IČO 87674343, sídlo, živnostenský rejstřík,
+  neplátce DPH) jsou podle ARES v patičce všech stránek a na Kontaktu. Hotovo.
 - **Nadpis úvodu** „VÁŠ AUTOSERVIS!“ je ze starého webu; pro vyhledávače by
   pomohlo „Autoservis a pneuservis Mariánské Lázně“. Změnit?
 - **Partneři a pojišťovny** na úvodu: zkontrolovat, že seznam odpovídá
