@@ -253,6 +253,12 @@ autopraizler.cz ověřená v Resendu:
 
 ## Obrázky
 
+Loga partnerů a značek dílů v `img/partneri/` jsou převzatá ze starého webu
+autopraizler.cz (banner Cebia, plaketa ELTMA a 16 log výrobců dílů z karuselu),
+kde je majitel už používal. Jde o ochranné známky jejich vlastníků; na webu
+jsou jen jako informace, které díly servis používá a s kým spolupracuje.
+
+
 Fotky provozovny pocházejí z firemního profilu na Googlu a Firmy.cz
 (slider 1–3, dlaždice Pneuservis, první dvě fotky galerie, obě fotky na
 Kontaktu). Zbylé dlaždice služeb, dvě fotky galerie a ilustrace na Službách
