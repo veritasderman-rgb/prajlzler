@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="AutoPraizler M.L.">
+<defs><linearGradient id="org" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBB040"/><stop offset="0.55" stop-color="#F28C1E"/><stop offset="1" stop-color="#D9641A"/></linearGradient></defs>
+<rect width="256" height="256" rx="48" fill="url(#org)"/><g transform="translate(128 128) scale(1.0) rotate(-45) translate(0 -30)"><path d="M -17 -56 L -17 -22 C -17 -11 -8 -6 0 -6 C 8 -6 17 -11 17 -22 L 17 -56 C 38 -48 50 -29 50 -8 C 50 13 39 28 24 34 L 14 34 L 14 100 C 14 110 7 116 0 116 C -7 116 -14 110 -14 100 L -14 34 L -24 34 C -39 28 -50 13 -50 -8 C -50 -29 -38 -48 -17 -56 Z" fill="#FFFFFF" stroke="#1E1E1E" stroke-width="8" stroke-linejoin="round"/></g>
+</svg>
