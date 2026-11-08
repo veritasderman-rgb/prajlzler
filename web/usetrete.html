@@ -25,10 +25,12 @@
 <meta name="geo.placename" content="Mariánské Lázně">
 <meta name="geo.position" content="49.9561919;12.6933308">
 <meta name="ICBM" content="49.9561919, 12.6933308">
+<!-- @head-common -->
 <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/fonts/audiowide-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/coda-400-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/style.css">
+<!-- /head-common -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -56,6 +58,7 @@
 </head>
 <body>
 <a class="skip-link" href="#obsah">Přejít na obsah</a>
+<!-- @sprite -->
 <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
   <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
   <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
@@ -97,13 +100,15 @@
   <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12 20 3m-3 3 3 3m-6 0 2 2"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
 </svg>
+<!-- /sprite -->
+<!-- @header -->
 <div class="topbar">
   <div class="container">
     <a href="tel:+420728920290"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg>+420 728 920 290</a>
     <span class="sep" aria-hidden="true">|</span>
     <a href="mailto:servis@autopraizler.cz"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mail"/></svg>servis@autopraizler.cz</a>
     <a class="social" href="https://www.facebook.com/AutoPraizler-ML-104299981555466" target="_blank" rel="noopener" aria-label="AutoPraizler M.L. na Facebooku"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-facebook"/></svg></a>
-    <a class="lang" href="/de/" lang="de" hreflang="de" title="Deutsche Version">DE</a>
+    <span class="langs"><a class="lang" href="/de/" lang="de" hreflang="de" title="Deutsche Version">DE</a><a class="lang" href="/en/" lang="en" hreflang="en" title="English version">EN</a></span>
   </div>
 </div>
 <header class="site-header">
@@ -121,6 +126,7 @@
     </nav>
   </div>
 </header>
+<!-- /header -->
 <main id="obsah">
 <section class="section--dark strip">
   <div class="container reveal">
@@ -144,14 +150,15 @@
 <section class="section section--white gallery" aria-label="Galerie">
   <div class="container">
     <ul>
-      <li class="reveal"><a href="/img/galerie-1.jpg" aria-label="Zvětšit fotografii"><img loading="lazy" src="/img/galerie-1.jpg" alt="Vjezdy do dílen autoservisu a pneuservisu AutoPraizler M.L." width="900" height="600"></a></li>
-      <li class="reveal"><a href="/img/galerie-2.jpg" aria-label="Zvětšit fotografii"><img loading="lazy" src="/img/galerie-2.jpg" alt="Auto na zvedáku v dílně AutoPraizler M.L." width="900" height="600"></a></li>
-      <li class="reveal"><a href="/img/galerie-3.jpg" aria-label="Zvětšit fotografii"><img loading="lazy" src="/img/galerie-3.jpg" alt="Autodíly: brzdové kotouče, spojková sada, brzdové destičky a filtry" width="900" height="600"></a></li>
-      <li class="reveal"><a href="/img/galerie-4.jpg" aria-label="Zvětšit fotografii"><img loading="lazy" src="/img/galerie-4.jpg" alt="Detail ozubených kol a ložisek převodovky" width="900" height="600"></a></li>
+      <li class="reveal"><a href="/img/galerie-1.jpg" aria-label="Zvětšit fotografii"><picture><source type="image/webp" srcset="/img/galerie-1-450.webp 450w, /img/galerie-1-900.webp 900w" sizes="(max-width: 600px) 50vw, 25vw"><img loading="lazy" src="/img/galerie-1.jpg" alt="Vjezdy do dílen autoservisu a pneuservisu AutoPraizler M.L." width="900" height="600"></picture></a></li>
+      <li class="reveal"><a href="/img/galerie-2.jpg" aria-label="Zvětšit fotografii"><picture><source type="image/webp" srcset="/img/galerie-2-450.webp 450w, /img/galerie-2-900.webp 900w" sizes="(max-width: 600px) 50vw, 25vw"><img loading="lazy" src="/img/galerie-2.jpg" alt="Auto na zvedáku v dílně AutoPraizler M.L." width="900" height="600"></picture></a></li>
+      <li class="reveal"><a href="/img/galerie-3.jpg" aria-label="Zvětšit fotografii"><picture><source type="image/webp" srcset="/img/galerie-3-450.webp 450w, /img/galerie-3-900.webp 900w" sizes="(max-width: 600px) 50vw, 25vw"><img loading="lazy" src="/img/galerie-3.jpg" alt="Autodíly: brzdové kotouče, spojková sada, brzdové destičky a filtry" width="900" height="600"></picture></a></li>
+      <li class="reveal"><a href="/img/galerie-4.jpg" aria-label="Zvětšit fotografii"><picture><source type="image/webp" srcset="/img/galerie-4-450.webp 450w, /img/galerie-4-900.webp 900w" sizes="(max-width: 600px) 50vw, 25vw"><img loading="lazy" src="/img/galerie-4.jpg" alt="Detail ozubených kol a ložisek převodovky" width="900" height="600"></picture></a></li>
     </ul>
   </div>
 </section>
 </main>
+<!-- @footer -->
 <footer>
   <nav class="footer-boxes" aria-label="Rychlé odkazy na kontakt">
     <div class="container">
@@ -165,7 +172,8 @@
   <div class="copyright">
     <div class="container">
       <p class="footer-nap"><span>AutoPraizler M.L.</span><span class="sep" aria-hidden="true">|</span><span>U Mlékárny 844/8A, 353 01 Mariánské Lázně</span><span class="sep" aria-hidden="true">|</span><a href="tel:+420728920290">+420 728 920 290</a><span class="sep" aria-hidden="true">|</span><a href="mailto:servis@autopraizler.cz">servis@autopraizler.cz</a></p>
-      <span>© 2026 AutoPraizler M.L.</span><span class="sep" aria-hidden="true">|</span><a href="/ochrana-osobnich-udaju/">Ochrana osobních údajů</a><span class="cookie-settings" hidden><span class="sep" aria-hidden="true">|</span><button type="button" class="link-btn">Nastavení cookies</button></span>
+      <p class="footer-legal">Provozovatel: Jaroslav Praizler, IČO 87674343, sídlo U Hřiště 280, 353 01 Velká Hleďsebe, provozovna U Mlékárny 844/8a, Mariánské Lázně. Fyzická osoba zapsaná v živnostenském rejstříku, Městský úřad Mariánské Lázně. Není plátce DPH.</p>
+      <span>© 2026 AutoPraizler M.L.</span><span class="sep" aria-hidden="true">|</span><a href="/ochrana-osobnich-udaju/">Ochrana osobních údajů</a><span class="sep" aria-hidden="true">|</span><a href="/de/" hreflang="de" lang="de">Deutsch</a><span class="sep" aria-hidden="true">|</span><a href="/en/" hreflang="en" lang="en">English</a><span class="cookie-settings" hidden><span class="sep" aria-hidden="true">|</span><button type="button" class="link-btn">Nastavení cookies</button></span>
     </div>
   </div>
 </footer>
@@ -174,6 +182,7 @@
   <a class="call-bar__book" href="/kontakt/#formular"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-calendar"/></svg>Objednat</a>
 </nav>
 <button class="to-top" type="button" aria-label="Zpět nahoru"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-chevron-up"/></svg></button>
+<!-- /footer -->
 <script src="/js/main.js" defer></script>
 <script src="/js/config.js" defer></script>
 <script src="/js/mereni.js" defer></script>

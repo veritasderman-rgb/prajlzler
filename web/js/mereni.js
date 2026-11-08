@@ -15,14 +15,22 @@
   if (!hasGoogle && !hasSklik) return; // měření není nastavené
 
   var KEY = 'ap_consent';
-  var isDe = (document.documentElement.lang || '').toLowerCase().indexOf('de') === 0;
+  var lang = (document.documentElement.lang || 'cs').toLowerCase().slice(0, 2);
+  var isDe = lang === 'de';
+  var isEn = lang === 'en';
   var granted = false;
   var gtagLoaded = false;
   var rcLoaded = false;
   var rcQueue = [];
   var bar = null;
 
-  var t = isDe ? {
+  var t = isEn ? {
+    text: 'With your consent we measure anonymously whether our ads (Google, Seznam) lead to calls and enquiries. This sets cookies. Without consent no data is passed to third parties.',
+    more: 'Privacy policy',
+    accept: 'Accept',
+    reject: 'Decline',
+    label: 'Cookie settings'
+  } : isDe ? {
     text: 'Mit Ihrer Zustimmung messen wir anonymisiert, ob unsere Anzeigen (Google, Seznam) zu Anrufen und Anfragen führen. Dazu werden Cookies gesetzt. Ohne Zustimmung werden keine Daten an Dritte übermittelt.',
     more: 'Datenschutz',
     accept: 'Akzeptieren',
@@ -174,7 +182,7 @@
   Array.prototype.forEach.call(document.querySelectorAll('.cookie-settings'), function (el) {
     el.removeAttribute('hidden');
     var btn = el.querySelector('button') || el;
-    if (isDe && btn.tagName === 'BUTTON') btn.textContent = t.label;
+    if ((isDe || isEn) && btn.tagName === 'BUTTON') btn.textContent = t.label;
     btn.addEventListener('click', function (e) {
       e.preventDefault();
       showBar();

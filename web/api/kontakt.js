@@ -7,17 +7,21 @@ const rateMap = new Map(); // ip -> [timestamps]
 
 const GENERIC_ERROR = 'Zprávu se nepodařilo odeslat. Zavolejte nám prosím na +420 728 920 290.';
 const GENERIC_ERROR_DE = 'Die Nachricht konnte nicht gesendet werden. Bitte rufen Sie uns an: +420 728 920 290.';
+const GENERIC_ERROR_EN = 'The message could not be sent. Please call us on +420 728 920 290.';
 
 // Stránky, na které smí funkce po odeslání bez JavaScriptu přesměrovat (pole „zpet“ ve formuláři).
-const RETURN_PAGES = ['/kontakt/', '/pneuservis/', '/klimatizace/', '/stk/', '/de/'];
+const RETURN_PAGES = ['/kontakt/', '/pneuservis/', '/klimatizace/', '/stk/', '/de/', '/en/'];
 
 function returnPage(fields) {
   const z = fields && typeof fields === 'object' ? String(fields.zpet || '').trim() : '';
   return RETURN_PAGES.includes(z) ? z : '/kontakt/';
 }
 
-function msg(ctx, cs, de) {
-  return ctx.zpet === '/de/' ? de : cs;
+// Hláška podle jazyka odesílající stránky: /de/ německy, /en/ anglicky, jinak česky.
+function msg(ctx, cs, de, en) {
+  if (ctx.zpet === '/de/') return de;
+  if (ctx.zpet === '/en/') return en || cs;
+  return cs;
 }
 
 function escapeHtml(str) {
@@ -105,10 +109,10 @@ function validate(fields) {
     website: str(fields.website, 200),
   };
   const errors = [];
-  if (data.jmeno.length < 2 || data.jmeno.length > 100) errors.push(['Zadejte prosím jméno (2–100 znaků).', 'Bitte geben Sie Ihren Namen ein (2–100 Zeichen).']);
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email) || data.email.length > 150) errors.push(['Zadejte prosím platný e-mail.', 'Bitte geben Sie eine gültige E-Mail-Adresse ein.']);
-  if (data.zprava.length < 5 || data.zprava.length > 3000) errors.push(['Zadejte prosím zprávu (5–3000 znaků).', 'Bitte geben Sie eine Nachricht ein (5–3000 Zeichen).']);
-  if (!data.souhlas) errors.push(['Potvrďte prosím souhlas se zpracováním osobních údajů.', 'Bitte bestätigen Sie die Einwilligung zur Datenverarbeitung.']);
+  if (data.jmeno.length < 2 || data.jmeno.length > 100) errors.push(['Zadejte prosím jméno (2–100 znaků).', 'Bitte geben Sie Ihren Namen ein (2–100 Zeichen).', 'Please enter your name (2–100 characters).']);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email) || data.email.length > 150) errors.push(['Zadejte prosím platný e-mail.', 'Bitte geben Sie eine gültige E-Mail-Adresse ein.', 'Please enter a valid e-mail address.']);
+  if (data.zprava.length < 5 || data.zprava.length > 3000) errors.push(['Zadejte prosím zprávu (5–3000 znaků).', 'Bitte geben Sie eine Nachricht ein (5–3000 Zeichen).', 'Please enter a message (5–3000 characters).']);
+  if (!data.souhlas) errors.push(['Potvrďte prosím souhlas se zpracováním osobních údajů.', 'Bitte bestätigen Sie die Einwilligung zur Datenverarbeitung.', 'Please confirm your consent to the processing of personal data.']);
   return { data, errors };
 }
 
@@ -149,7 +153,7 @@ export default async function handler(req, res) {
   const { fields, isForm } = parsed;
   const ctx = { isForm, zpet: returnPage(fields) };
   if (!fields || typeof fields !== 'object') {
-    respond(res, 400, { ok: false, error: msg(ctx, 'Neplatný požadavek.', 'Ungültige Anfrage.') }, ctx, false);
+    respond(res, 400, { ok: false, error: msg(ctx, 'Neplatný požadavek.', 'Ungültige Anfrage.', 'Invalid request.') }, ctx, false);
     return;
   }
 
@@ -162,13 +166,13 @@ export default async function handler(req, res) {
   }
 
   if (errors.length) {
-    respond(res, 400, { ok: false, error: errors.map((e) => msg(ctx, e[0], e[1])).join(' ') }, ctx, false);
+    respond(res, 400, { ok: false, error: errors.map((e) => msg(ctx, e[0], e[1], e[2])).join(' ') }, ctx, false);
     return;
   }
 
   const ip = clientIp(req);
   if (isRateLimited(ip)) {
-    respond(res, 429, { ok: false, error: msg(ctx, 'Příliš mnoho požadavků. Zkuste to prosím později.', 'Zu viele Anfragen. Bitte versuchen Sie es später erneut.') }, ctx, false);
+    respond(res, 429, { ok: false, error: msg(ctx, 'Příliš mnoho požadavků. Zkuste to prosím později.', 'Zu viele Anfragen. Bitte versuchen Sie es später erneut.', 'Too many requests. Please try again later.') }, ctx, false);
     return;
   }
 
@@ -177,7 +181,7 @@ export default async function handler(req, res) {
   const from = process.env.CONTACT_FROM || 'AutoPraizler web <web@josefpavlovic.cz>';
   if (!apiKey || !to) {
     console.error('kontakt: chybí konfigurace (RESEND_API_KEY nebo CONTACT_TO)');
-    respond(res, 500, { ok: false, error: msg(ctx, GENERIC_ERROR, GENERIC_ERROR_DE) }, ctx, false);
+    respond(res, 500, { ok: false, error: msg(ctx, GENERIC_ERROR, GENERIC_ERROR_DE, GENERIC_ERROR_EN) }, ctx, false);
     return;
   }
 
@@ -227,12 +231,12 @@ export default async function handler(req, res) {
       let detail = '';
       try { detail = await r.text(); } catch { /* ignorujeme */ }
       console.error('kontakt: Resend odpověděl ' + r.status, detail.slice(0, 500));
-      respond(res, 502, { ok: false, error: msg(ctx, GENERIC_ERROR, GENERIC_ERROR_DE) }, ctx, false);
+      respond(res, 502, { ok: false, error: msg(ctx, GENERIC_ERROR, GENERIC_ERROR_DE, GENERIC_ERROR_EN) }, ctx, false);
       return;
     }
   } catch (err) {
     console.error('kontakt: odeslání selhalo', err && err.message);
-    respond(res, 502, { ok: false, error: msg(ctx, GENERIC_ERROR, GENERIC_ERROR_DE) }, ctx, false);
+    respond(res, 502, { ok: false, error: msg(ctx, GENERIC_ERROR, GENERIC_ERROR_DE, GENERIC_ERROR_EN) }, ctx, false);
     return;
   }
 

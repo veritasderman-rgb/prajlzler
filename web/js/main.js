@@ -168,7 +168,7 @@
   }
 
   /* ---------- Poptávkový formulář (Kontakt, vstupní stránky služeb, /de/) ---------- */
-  // Funguje pro každý <form class="form" data-endpoint="/api/kontakt"> na stránce.
+  // Funguje pro každý <form class="form" data-endpoint="/api/kontakt/"> na stránce.
   // Volitelné atributy formuláře: data-status (id prvku pro stav, výchozí "form-status"),
   // data-ok / data-err (vlastní texty, např. německé; je-li data-err uveden, chybové hlášky z API se nezobrazují).
   var forms = document.querySelectorAll('form.form[data-endpoint]');

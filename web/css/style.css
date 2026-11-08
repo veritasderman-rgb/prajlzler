@@ -614,6 +614,16 @@ svg.icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-wid
   body { padding-bottom: 0; }
 }
 
+/* ---------- Přepínač jazyků v horní liště ---------- */
+.topbar .langs { display: inline-flex; gap: 6px; }
+.topbar .langs .lang + .lang { border-left: 1px solid rgba(255,255,255,.35); padding-left: 6px; }
+
+/* ---------- Patička: povinné údaje podnikatele ---------- */
+.footer-legal { margin: 0 0 12px; font-size: 12px; line-height: 1.6; color: #9a9a9a; }
+
+/* ---------- Responzivní obrázky: <picture> se nechová jako box, styly míří na <img> ---------- */
+picture { display: contents; }
+
 /* ---------- Patička: adresa a kontakt (lokální SEO) ---------- */
 .footer-nap { margin: 0 0 10px; color: #d6d6d6; line-height: 1.6; }
 .footer-nap a { color: #fff; }

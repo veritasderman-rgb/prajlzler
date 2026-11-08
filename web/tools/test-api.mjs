@@ -133,6 +133,14 @@ const valid = { jmeno: 'Jan Novák', email: 'jan@example.com', telefon: '777 000
   assert.equal(de.statusCode, 400);
   assert.match(JSON.parse(de.body).error, /E-Mail-Adresse/);
   console.log('OK  /de/ -> německé hlášky');
+
+  // /en/: chybové hlášky anglicky, návrat bez JavaScriptu na /en/
+  const en = await run({ body: JSON.stringify({ ...valid, email: 'spatne', zpet: '/en/' }) });
+  assert.equal(en.statusCode, 400);
+  assert.match(JSON.parse(en.body).error, /valid e-mail address/);
+  const enForm = await run({ body: new URLSearchParams({ ...valid, zpet: '/en/' }).toString(), contentType: 'application/x-www-form-urlencoded' });
+  assert.equal(enForm.headers.location, '/en/?odeslano=1#odeslano');
+  console.log('OK  /en/ -> anglické hlášky, návrat na /en/');
 }
 
 // 7) výchozí CONTACT_FROM

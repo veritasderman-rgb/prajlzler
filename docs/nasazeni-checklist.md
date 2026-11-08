@@ -121,14 +121,15 @@ Dokud jsou ID prázdná, web nic neměří a neukazuje cookie lištu.
 
 ## 8. Otázky a rozhodnutí pro Jardu
 
-- **Otevírací doba**: web uvádí Po–Pá 8–12 a 13–17, So–Ne po dohodě
-  (převzato ze starého webu). Platí?
+- **Otevírací doba**: Po–Pá 8–12 a 13–17, So–Ne po dohodě. Potvrzeno 8. 11. 2026.
 - **Ceník**: ceny jsou teď jen na stránce Ceník (1:1 ze starého webu, včetně
   PDF). Nechat, nebo stránku stáhnout a nechat jen „cenu řekneme po
   prohlídce“?
-- **Německá stránka** `/de/` tvrdí: platba kartou i hotově, personál mluví
-  německy a anglicky, parkování před dílnou, dvě minuty od nádraží. Nic z toho
-  není v podkladech. Potvrdit, nebo smazat.
+- **Německá a anglická stránka** (`/de/`, `/en/`): platba kartou i hotově,
+  personál mluví německy a anglicky, parkování před dílnou, dvě minuty od
+  nádraží. Potvrzeno 8. 11. 2026.
+- **Povinné údaje podnikatele** (IČO 87674343, sídlo, živnostenský rejstřík,
+  neplátce DPH) jsou podle ARES v patičce všech stránek a na Kontaktu. Hotovo.
 - **Nadpis úvodu** „VÁŠ AUTOSERVIS!“ je ze starého webu; pro vyhledávače by
   pomohlo „Autoservis a pneuservis Mariánské Lázně“. Změnit?
 - **Partneři a pojišťovny** na úvodu: zkontrolovat, že seznam odpovídá
@@ -146,3 +147,71 @@ Dokud jsou ID prázdná, web nic neměří a neukazuje cookie lištu.
   smazat (historie v gitu zůstane).
 - Složka `wp/` (WordPress šablona z fáze 5) se už nepoužívá; nechat jako
   zálohu, nebo smazat.
+
+## 10. Předání Jardovi: web pod jeho vlastními účty (až se rozhodne)
+
+Cílový stav: repozitář, hosting, odesílání e-mailů i doména patří Jardovi
+a nic neběží přes Josefovy účty. Všechny tajné hodnoty budou nové, Jardovy;
+nic z Josefova nastavení se nekopíruje.
+
+### Doporučený postup (asi hodina, Claude může vést na dálku)
+
+1. **GitHub**: Jarda si založí účet (stačí bezplatný). Josef mu převede
+   repozitář: GitHub → repozitář → Settings → Danger Zone → Transfer
+   ownership. Historie, PR i staré odkazy zůstanou (přesměrují se). Správa
+   aktualit zapisuje do repozitáře tokenem, proto má repozitář patřit tomu,
+   kdo web vlastní.
+2. **Resend**: Jarda si založí účet, Domains → Add domain `autopraizler.cz`
+   (region EU). Resend vypíše DNS záznamy (TXT pro DKIM a SPF, MX pro
+   poddoménu typu `send.autopraizler.cz`); ty se zadají ve Forpsi. MX hlavní
+   domény se nemění, pošta jede dál. Pak API Keys → vytvořit klíč.
+3. **GitHub token**: podle bodu 2 tohoto checklistu, jen na Jardově účtu
+   (fine-grained, jen repozitář prajlzler, Contents čtení a zápis).
+4. **Vercel**: Jarda si založí účet a propojí ho s GitHubem. Add New →
+   Project → Import repozitáře → Root Directory `web` → Environment
+   Variables podle bodu 1 tohoto checklistu, ale s jeho hodnotami:
+
+   | Proměnná | Hodnota |
+   |---|---|
+   | `RESEND_API_KEY` | klíč z Jardova Resendu |
+   | `CONTACT_TO` | Jardův e-mail pro poptávky |
+   | `CONTACT_FROM` | `AutoPraizler web <web@autopraizler.cz>` |
+   | `ADMIN_SECRET` | nový náhodný řetězec (vygeneruje Claude nebo `openssl rand -hex 32`) |
+   | `ADMIN_EMAILS` | Jardův e-mail (případně více, oddělené čárkou) |
+   | `GITHUB_TOKEN` | token z bodu 3 |
+   | `SITE_URL` | `https://autopraizler.cz` |
+
+   Deploy, pak test podle bodu 3.
+5. **Doména**: ve Vercelu Settings → Domains → `autopraizler.cz` a
+   `www.autopraizler.cz`; ve Forpsi změnit A záznam kořene a CNAME `www` na
+   hodnoty od Vercelu (bod 4 tohoto checklistu). Pokud web už běží na Josefově
+   Vercelu, doménu tam nejdřív odebrat, jinak ji Vercel nepustí.
+6. **Úklid u Josefa**: smazat projekt prajlzler ve Vercelu, smazat doménu a
+   klíč v Resendu (nebo celý klíč, pokud se už nepoužívá), zrušit GitHub
+   token. Zkontrolovat, že ve Forpsi nezůstaly staré TXT záznamy pro
+   josefpavlovic.cz (tam žádné nebyly, formulář zatím posílá z Josefovy
+   domény přes Josefův Resend).
+
+### Alternativa: převod hotového projektu ve Vercelu
+
+Vercel umí projekt převést na jiný účet (Settings → General → Transfer
+Project; příjemce ho musí přijmout). Přenese se nastavení, domény i
+proměnné prostředí, ale propojení s GitHubem se musí znovu navázat na
+repozitář, ke kterému má Jarda přístup, takže převod repozitáře je potřeba
+stejně. Proměnné by navíc obsahovaly Josefův Resend klíč a GitHub token,
+které by se musely hned vyměnit. Ušetří to pár minut, je to méně čisté.
+
+### Na co dát pozor
+
+- **Tarif Vercelu**: bezplatný Hobby je podle podmínek Vercelu jen pro
+  nekomerční použití. Web firmy je komerční, Jarda by měl počítat s tarifem
+  Pro (20 USD měsíčně za uživatele), nebo zvolit hosting, kde je bezplatný
+  tarif pro firmy povolený (Netlify, Cloudflare Pages). Statická část webu
+  je přenositelná beze změn; čtyři serverové funkce (`web/api/`) by jinde
+  potřebovaly menší úpravu obálky (Netlify Functions, Cloudflare Workers).
+- **Dvoufázové přepnutí**: nejdřív rozjet web na Jardově Vercelu na
+  dočasné adrese `*.vercel.app`, otestovat formulář i administraci a teprve
+  pak přepnout doménu. Výpadek je pak jen propagace DNS.
+- **Přihlášení do administrace** je vázané na `ADMIN_SECRET`: po jeho změně
+  se musí každý přihlásit znovu (přijde nový odkaz e-mailem). Nic jiného se
+  neztratí, aktuality jsou v repozitáři.
