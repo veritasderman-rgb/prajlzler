@@ -260,33 +260,17 @@ svg.icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-wid
 .partners h2 { font-family: var(--font-body); font-weight: 800; font-size: 17px; text-transform: uppercase; color: var(--text); display: flex; gap: 8px; align-items: flex-start; margin-bottom: 18px; }
 .partners h2 .icon { color: var(--red); width: 20px; height: 20px; stroke-width: 3; margin-top: 3px; }
 .partner-link { text-decoration: none; display: block; color: inherit; }
-.partner-link:hover .partner-box, .partner-link:focus-visible .partner-box { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,.18); }
-.partner-box { transition: transform .25s ease, box-shadow .25s ease; }
-.cebia-box {
-  background: #0b2a5b; color: #fff; aspect-ratio: 1 / 1; max-width: 300px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between;
-  border-radius: 6px;
-}
-.cebia-box .cebia-tag { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .85; font-weight: 800; }
-.cebia-box .cebia-name { font-family: var(--font-head); font-size: 34px; text-transform: lowercase; margin: 8px 0 4px; }
-.cebia-box .cebia-claim { font-size: 15px; line-height: 1.4; }
-.cebia-box .icon { width: 44px; height: 44px; color: #8fc1ff; }
-.cebia-box .btn-green { align-self: flex-start; }
-.btn-green { display: inline-block; background: #2bb24c; color: #fff; font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; padding: 10px 16px; border-radius: 4px; }
-.eltma-plaque {
-  width: 240px; height: 240px; border-radius: 50%; background: #e4e4e4; color: #333; margin: 0 auto;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 26px;
-  box-shadow: inset 0 0 0 8px #d2d2d2;
-}
-.eltma-plaque .eltma-text { font-size: 15px; line-height: 1.3; font-weight: 800; text-transform: lowercase; max-width: 160px; }
-.eltma-plaque .eltma-logo { font-family: var(--font-head); font-size: 34px; color: #2a9d3a; letter-spacing: .02em; margin-top: 10px; }
-.eltma-plaque .icon { width: 36px; height: 36px; color: #2a9d3a; margin-bottom: 8px; }
-
+.partner-img { display: block; width: 100%; max-width: 300px; height: auto; transition: transform .25s ease, box-shadow .25s ease; }
+.partner-link:hover .partner-img, .partner-link:focus-visible .partner-img { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,.18); }
+.partner-img--round { border-radius: 50%; }
 .brands { overflow: hidden; position: relative; padding: 24px 0; }
 .brands::before, .brands::after { content: ""; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2; pointer-events: none; }
 .brands::before { left: 0; background: linear-gradient(to right, #fff, rgba(255,255,255,0)); }
 .brands::after { right: 0; background: linear-gradient(to left, #fff, rgba(255,255,255,0)); }
 .brands__track { display: flex; gap: 14px; width: max-content; animation: brands-scroll 48s linear infinite; }
 .brands:hover .brands__track, .brands:focus-within .brands__track { animation-play-state: paused; }
+.brand-logo { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; height: 88px; padding: 10px 20px; background: #fff; border: 1px solid var(--grey-line); border-radius: 4px; }
+.brand-logo img { display: block; width: auto; height: auto; max-height: 60px; max-width: 150px; object-fit: contain; }
 .brand-badge {
   flex: 0 0 auto; width: 150px; height: 70px; display: flex; align-items: center; justify-content: center;
   border: 1px solid var(--grey-line); border-radius: 4px; background: #fff; color: #2c2c2c;
@@ -303,7 +287,7 @@ svg.icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-wid
   .partners .grid { grid-template-columns: 1fr 1fr; }
   .partners .grid > .partners__center { grid-column: 1 / -1; order: 3; }
 }
-@media (max-width: 600px) { .partners .grid { grid-template-columns: 1fr; } .cebia-box { max-width: 100%; aspect-ratio: auto; gap: 14px; } }
+@media (max-width: 600px) { .partners .grid { grid-template-columns: 1fr; } .partner-img { max-width: 260px; } }
 
 /* ---------- Výhody (červená) ---------- */
 .benefits ul { display: grid; gap: 22px; max-width: 900px; margin: 0 auto; }
@@ -493,7 +477,7 @@ svg.icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-wid
 @media (prefers-reduced-motion: reduce) {
   .js .reveal { opacity: 1; transform: none; transition: none; }
   .hero__slide { transition: none; }
-  .tile img, .gallery img, .footer-boxes a, .partner-box { transition: none; }
+  .tile img, .gallery img, .footer-boxes a, .partner-img { transition: none; }
 }
 
 /* ---------- Jazykový přepínač v horní liště ---------- */
