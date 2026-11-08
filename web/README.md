@@ -282,6 +282,11 @@ web/
   odstraní z obou JSONů a smaže i soubor fotky.
 - Pokud hlavní soubor `obsah/aktuality/novinky.json` neexistuje (první
   nasazení), funkce převezme položky z veřejného souboru a hlavní založí.
+- Veřejný soubor se vždy odvozuje z **čerstvě načteného** hlavního souboru,
+  ne z dat požadavku, a jeho zápis je idempotentní: když zápis hlavního
+  souboru projde a veřejného ne (výpadek GitHubu), dorovná ho kterýkoli
+  další požadavek, včetně pouhého načtení seznamu v administraci. Smazání
+  už neexistující položky vrací úspěch a jen dorovná veřejný soubor.
 - Repozitář je veřejný, takže skryté návrhy jsou technicky vidět na GitHubu
   (a jejich fotky na `/data/obrazky/`, i když na ně web neodkazuje). Na webu
   samotném se nezobrazují. Do aktualit proto nepatří nic důvěrného.
