@@ -19,7 +19,7 @@ web/
 ├── css/style.css                 jediný stylopis
 ├── js/main.js                    menu, slider, galerie, formulář, mapa (bez knihoven)
 ├── fonts/                        Audiowide a Coda (woff2, licence OFL.txt)
-├── img/                          logo (SVG), fotky, zástupné obrázky
+├── img/                          logo (SVG), fotky provozovny, ilustrační obrázky
 ├── dokumenty/                    orientacni-cenik-2026.pdf, zasady-zpracovani-osobnich-udaju.pdf
 ├── api/kontakt.js                serverless funkce (Vercel, Node 20+, ESM)
 ├── tools/placeholders.sh         vygeneruje zástupné obrázky, pokud chybí
@@ -112,20 +112,23 @@ autopraizler.cz ověřená v Resendu:
 
 ## Obrázky
 
-Všechny fotografie kromě dvou snímků provozovny jsou **vygenerované umělou
-inteligencí** (ilustrační) – patička to uvádí a alt texty končí
-„(ilustrační foto, AI)“. Dokud finální obrázky nejsou k dispozici, skript
-`tools/placeholders.sh` vytvoří zástupné JPG/PNG se správnými rozměry
-(jen pokud soubor neexistuje). Finální soubory stačí nahrát do `web/img/`
-pod těmito názvy:
+Fotky provozovny pocházejí z firemního profilu na Googlu a Firmy.cz
+(slider 1–3, dlaždice Pneuservis, první dvě fotky galerie, obě fotky na
+Kontaktu). Zbylé dlaždice služeb, dvě fotky galerie a ilustrace na Službách
+jsou ilustrační obrázky vytvořené pro tento web (bez licencí třetích stran).
+Chybí-li některý soubor, skript `tools/placeholders.sh` vytvoří zástupný
+JPG/PNG se správnými rozměry. Nové fotky stačí nahrát do `web/img/` pod
+těmito názvy:
 
-| Soubor | Rozměr | Kde |
-|---|---|---|
-| `slider-1.jpg`, `slider-2.jpg`, `slider-3.jpg` | 1920×650 | slider na úvodu |
-| `sluzba-pneuservis.jpg`, `sluzba-klimatizace.jpg`, `sluzba-autoskla.jpg`, `sluzba-diagnostika.jpg`, `sluzba-lakovani.jpg`, `sluzba-stk.jpg` | 900×600 | dlaždice služeb na úvodu, dvě z nich i na Ceníku |
-| `galerie-1.jpg` … `galerie-4.jpg` | 900×600 | galerie na Úvodu a Ušetřete |
-| `sluzby-ilustrace.png` | 1200×1200 | prostřední sloupec na Službách |
-| `provozovna-1.jpg`, `provozovna-2.jpg` | libovolný | **skutečné fotky budovy** (kopie `assets/img/budova-ulice.jpg` a `vjezdy-dilny.jpg`) |
+| Soubor | Rozměr | Kde | Původ |
+|---|---|---|---|
+| `slider-1.jpg`, `slider-2.jpg`, `slider-3.jpg` | 1920×650 | slider na úvodu | budova v zimě (Firmy.cz), budova z ulice a dílna (Google) |
+| `sluzba-pneuservis.jpg` | 900×600 | dlaždice na úvodu a Ceníku | vyvažovačka (Google) |
+| `sluzba-klimatizace.jpg`, `sluzba-autoskla.jpg`, `sluzba-diagnostika.jpg`, `sluzba-lakovani.jpg`, `sluzba-stk.jpg` | 900×600 | dlaždice služeb na úvodu, diagnostika i na Ceníku | ilustrační |
+| `galerie-1.jpg`, `galerie-2.jpg` | 900×600 | galerie na Úvodu a Ušetřete | vjezdy a dílna (Google) |
+| `galerie-3.jpg`, `galerie-4.jpg` | 900×600 | galerie na Úvodu a Ušetřete | ilustrační (autodíly, převodovka) |
+| `sluzby-ilustrace.png` | 1024×1024 | prostřední sloupec na Službách | ilustrace |
+| `provozovna-1.jpg`, `provozovna-2.jpg` | libovolný | Kontakt | budova a vjezdy (Google) |
 
 Loga: `img/autopraizler-wordmark-white.svg` (hlavička), `favicon.svg`,
 `autopraizler-logo.svg`, `autopraizler-mark.svg` – vlastní vektory z `assets/logo/`.
