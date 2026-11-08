@@ -81,6 +81,7 @@
   function sklikHit() {
     if (!hasSklik || !granted) return;
     var fire = function () {
+      if (!granted) return; // souhlas mohl být mezitím odvolán
       if (window.rc && typeof window.rc.conversionHit === 'function') {
         var hit = { id: Number(cfg.sklikConversionId), consent: 1 };
         if (cfg.sklikConversionValue) hit.value = Number(cfg.sklikConversionValue);
@@ -107,6 +108,20 @@
     });
     loadGoogle();
     loadSklik();
+  }
+
+  // Odvolání souhlasu: už načtený Google tag dostane „denied“, čekající konverze Sklik se zahodí.
+  function deny() {
+    granted = false;
+    rcQueue = [];
+    if (gtagLoaded) {
+      gtag('consent', 'update', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied'
+      });
+    }
   }
 
   /* ---------- Lišta souhlasu (vlastní markup, bez knihoven) ---------- */
@@ -142,7 +157,7 @@
     actions.appendChild(accept);
 
     accept.addEventListener('click', function () { store.set('granted'); hideBar(); grant(); });
-    reject.addEventListener('click', function () { store.set('denied'); hideBar(); granted = false; });
+    reject.addEventListener('click', function () { store.set('denied'); hideBar(); deny(); });
 
     inner.appendChild(p);
     inner.appendChild(actions);

@@ -1,12 +1,3 @@
 {
-  "items": [
-    {
-      "id": "2026-11-08-ukazka",
-      "datum": "2026-11-08",
-      "nadpis": "Ukázková aktualita",
-      "text": "Toto je ukázková aktualita. Je označená jako nezveřejněná, takže se na webu nezobrazí.\n\nVe správě aktualit (/admin/) ji můžete upravit, zveřejnit nebo smazat a napsat vlastní – třeba o sezónní akci na přezutí pneumatik nebo o změně otevírací doby.",
-      "obrazek": null,
-      "publikovano": false
-    }
-  ]
+  "items": []
 }
