@@ -76,8 +76,13 @@ nesmí měnit. Přepnutí webu se e-mailu nedotkne, mění se jen záznamy pro w
    Nemazat MX, TXT (SPF, DKIM) ani nic jiného.
 3. Po propagaci (minuty až hodiny) Vercel vystaví certifikát sám.
 4. Ve Vercelu změnit `SITE_URL` na `https://autopraizler.cz` a znovu nasadit.
-5. Starý web na SvetHostingu nechat ještě měsíc běžet jako zálohu, pak zrušit
-   (viz audit/hosting.md).
+5. Starý web na SvetHostingu nechat běžet jako zálohu. **Hosting u
+   SvetHostingu nerušit**: podle audit/hosting.md tam běží i Jardova pošta
+   (MX domény míří na `mail.svethostingu.cz`, schránky jsou u SvetHostingu,
+   ne u Forpsi). Přepnutí webu na Vercel ani Resend schránky nikam
+   nepřenáší. Zrušit lze až poté, co se pošta prokazatelně přesune jinam
+   (samostatně schválená migrace schránek, dohodnutá s Jardou), nebo co
+   poskytovatel potvrdí, že lze zrušit jen web a poštu ponechat.
 
 ## 5. E-mail z Jardovy domény (Josef, později)
 
