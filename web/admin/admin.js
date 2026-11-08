@@ -74,7 +74,7 @@
     }
     return fetch(url, opts).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (data) {
-        if (r.status === 401 && url.indexOf('/api/admin-session') === -1) {
+        if (r.status === 401 && url.indexOf('/api/admin-session/') === -1) {
           showScreen('login');
           setMsg($('login-msg'), 'Přihlášení vypršelo. Nechte si prosím poslat nový odkaz.', 'err');
         }
@@ -104,7 +104,7 @@
     input.classList.remove('is-invalid');
     setBusy(true);
     setMsg(msg, 'Odesílám…', 'info');
-    api('POST', '/api/admin-login', { email: email }).then(function (res) {
+    api('POST', '/api/admin-login/', { email: email }).then(function (res) {
       setBusy(false);
       if (res.status === 200 && res.data.ok) {
         setMsg(msg, res.data.message || 'Pokud je tato adresa povolená, poslali jsme na ni přihlašovací odkaz.', 'ok');
@@ -119,7 +119,7 @@
 
   $('btn-logout').addEventListener('click', function () {
     setBusy(true);
-    api('DELETE', '/api/admin-session').then(function () {
+    api('DELETE', '/api/admin-session/').then(function () {
       setBusy(false);
       state.items = [];
       hideForm();
@@ -140,7 +140,7 @@
 
   function exchangeToken(token) {
     showScreen('wait');
-    api('POST', '/api/admin-session', { t: token }).then(function (res) {
+    api('POST', '/api/admin-session/', { t: token }).then(function (res) {
       // odstraníme token z adresy, aby nezůstal v historii / záložkách
       try { history.replaceState(null, '', location.pathname); } catch (err) { /* nevadí */ }
       if (res.status === 200 && res.data.ok) {
@@ -156,7 +156,7 @@
   }
 
   function checkSession() {
-    api('GET', '/api/admin-session').then(function (res) {
+    api('GET', '/api/admin-session/').then(function (res) {
       if (res.status === 200 && res.data.ok) {
         enterApp(res.data.email);
       } else {
@@ -174,7 +174,7 @@
     var list = $('admin-list');
     $('admin-loading').hidden = false;
     $('admin-empty').hidden = true;
-    api('GET', '/api/novinky').then(function (res) {
+    api('GET', '/api/novinky/').then(function (res) {
       $('admin-loading').hidden = true;
       if (res.status === 200 && res.data.ok && Array.isArray(res.data.items)) {
         state.items = res.data.items;
@@ -377,7 +377,7 @@
 
     setBusy(true);
     setMsg(msg, 'Ukládám… může to chvíli trvat.', 'info');
-    api('POST', '/api/novinky', body).then(function (res) {
+    api('POST', '/api/novinky/', body).then(function (res) {
       setBusy(false);
       if (res.status === 200 && res.data.ok) {
         var saved = res.data.item;
@@ -402,7 +402,7 @@
     if (!window.confirm('Opravdu smazat aktualitu „' + item.nadpis + '“? Tuto akci nelze vrátit.')) return;
     setBusy(true);
     setMsg($('app-msg'), 'Mažu…', 'info');
-    api('DELETE', '/api/novinky?id=' + encodeURIComponent(item.id)).then(function (res) {
+    api('DELETE', '/api/novinky/?id=' + encodeURIComponent(item.id)).then(function (res) {
       setBusy(false);
       if (res.status === 200 && res.data.ok) {
         state.items = state.items.filter(function (it) { return it.id !== item.id; });
