@@ -1,0 +1,47 @@
+/* AutoPraizler M.L. – aktuality (úvodní stránka + /novinky/). Navazuje na css/style.css. */
+
+/* ---------- Společné ---------- */
+.aktualita__date {
+  display: block; font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--red);
+  margin-bottom: 6px;
+}
+.aktualita__title { font-family: var(--font-head); font-weight: 400; line-height: 1.25; margin: 0 0 10px; color: var(--text); }
+.aktualita__text p { margin: 0 0 .8em; }
+.aktualita__text p:last-child { margin-bottom: 0; }
+.aktualita__img { background: #222; overflow: hidden; }
+.aktualita__img img { width: 100%; height: 100%; object-fit: cover; }
+.aktuality__empty { text-align: center; color: #666; font-size: 17px; padding: 30px 0; }
+
+/* ---------- Úvodní stránka: sekce AKTUALITY ---------- */
+.aktuality { background: var(--grey-light); }
+.aktuality h2.aktuality__heading { text-align: center; text-transform: uppercase; margin-bottom: 34px; }
+.aktuality__list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.aktuality__list--1 { grid-template-columns: minmax(0, 720px); justify-content: center; }
+.aktuality__list--2 { grid-template-columns: repeat(2, minmax(0, 480px)); justify-content: center; }
+.aktualita--card {
+  display: flex; flex-direction: column; background: #fff; border: 1px solid var(--grey-line); border-radius: 4px; overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+.aktualita--card .aktualita__img { aspect-ratio: 3 / 2; }
+.aktualita--card .aktualita__body { padding: 22px 22px 24px; }
+.aktualita--card .aktualita__title { font-size: 19px; }
+.aktualita--card .aktualita__text { font-size: 15px; color: #444; }
+.aktuality__more { text-align: center; margin: 34px 0 0; }
+@media (max-width: 900px) { .aktuality__list, .aktuality__list--2 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 580px) { .aktuality__list, .aktuality__list--2 { grid-template-columns: 1fr; } }
+
+/* ---------- Stránka /novinky/ ---------- */
+.novinky { padding: 60px 0 70px; }
+.novinky__list { display: grid; gap: 28px; max-width: 900px; margin: 0 auto; }
+.aktualita--row {
+  display: grid; grid-template-columns: 1fr; gap: 22px; background: #fff; border: 1px solid var(--grey-line); border-radius: 4px; overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+.aktualita--row .aktualita__img { aspect-ratio: 3 / 2; }
+.aktualita--row .aktualita__body { padding: 26px 28px 28px; }
+.aktualita--row .aktualita__title { font-size: clamp(20px, 2.4vw, 26px); }
+.aktualita--row .aktualita__text { font-size: 16px; color: #444; }
+@media (min-width: 720px) {
+  .aktualita--row.aktualita--has-img { grid-template-columns: 300px 1fr; gap: 0; }
+  .aktualita--row .aktualita__img { aspect-ratio: auto; min-height: 220px; }
+}

@@ -3,44 +3,87 @@
   "cleanUrls": true,
   "trailingSlash": true,
   "redirects": [
-    { "source": "/wp-content/uploads/2026/03/Orientacni-cenik-2026.pdf", "destination": "/dokumenty/orientacni-cenik-2026.pdf", "permanent": true },
-    { "source": "/wp-content/uploads/2023/12/00-Zasady-zpracovani-osobnich-udaju-aktualizovane.pdf", "destination": "/dokumenty/zasady-zpracovani-osobnich-udaju.pdf", "permanent": true },
-    { "source": "/ahoj-vsichni", "destination": "/", "permanent": true },
-    { "source": "/zkusebni-stranka", "destination": "/", "permanent": true }
+    {
+      "source": "/wp-content/uploads/2026/03/Orientacni-cenik-2026.pdf",
+      "destination": "/dokumenty/orientacni-cenik-2026.pdf",
+      "permanent": true
+    },
+    {
+      "source": "/wp-content/uploads/2023/12/00-Zasady-zpracovani-osobnich-udaju-aktualizovane.pdf",
+      "destination": "/dokumenty/zasady-zpracovani-osobnich-udaju.pdf",
+      "permanent": true
+    },
+    {
+      "source": "/ahoj-vsichni",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/zkusebni-stranka",
+      "destination": "/",
+      "permanent": true
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; img-src 'self' data: https://www.google.com https://www.google.cz https://googleads.g.doubleclick.net https://c.seznam.cz https://h.seznam.cz; style-src 'self'; script-src 'self' https://www.googletagmanager.com https://c.seznam.cz; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://www.google.com https://c.seznam.cz https://h.seznam.cz; frame-src https://td.doubleclick.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+        }
       ]
     },
     {
       "source": "/kontakt",
       "headers": [
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests" }
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; img-src 'self' data: https://www.google.com https://www.google.cz https://googleads.g.doubleclick.net https://c.seznam.cz https://h.seznam.cz; style-src 'self'; script-src 'self' https://www.googletagmanager.com https://c.seznam.cz; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://www.google.com https://c.seznam.cz https://h.seznam.cz; frame-src https://www.google.com https://maps.google.com https://td.doubleclick.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+        }
       ]
     },
     {
       "source": "/kontakt/",
       "headers": [
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests" }
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; img-src 'self' data: https://www.google.com https://www.google.cz https://googleads.g.doubleclick.net https://c.seznam.cz https://h.seznam.cz; style-src 'self'; script-src 'self' https://www.googletagmanager.com https://c.seznam.cz; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://www.google.com https://c.seznam.cz https://h.seznam.cz; frame-src https://www.google.com https://maps.google.com https://td.doubleclick.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+        }
       ]
     },
     {
       "source": "/(fonts|img|css|js)/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
       ]
     },
     {
       "source": "/dokumenty/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
       ]
     }
   ]

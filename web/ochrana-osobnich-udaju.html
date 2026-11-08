@@ -60,6 +60,7 @@
   <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 16V7h11v9M13 11h5l4 4v1M2 16h2m5 0h5m4 0h4"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/></symbol>
   <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3zM9 12l2 2 4-4"/></symbol>
   <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12 20 3m-3 3 3 3m-6 0 2 2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
 </svg>
 <div class="topbar">
   <div class="container">
@@ -67,6 +68,7 @@
     <span class="sep" aria-hidden="true">|</span>
     <a href="mailto:servis@autopraizler.cz"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mail"/></svg>servis@autopraizler.cz</a>
     <a class="social" href="https://www.facebook.com/AutoPraizler-ML-104299981555466" target="_blank" rel="noopener" aria-label="AutoPraizler M.L. na Facebooku"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-facebook"/></svg></a>
+    <a class="lang" href="/de/" lang="de" hreflang="de" title="Deutsche Version">DE</a>
   </div>
 </div>
 <header class="site-header">
@@ -166,8 +168,16 @@
     <p class="meta"><b>Tyto zásady zpracování osobních údajů nabývají účinnosti dnem 1. 12. 2023.</b></p>
 
     <div class="box">
-      <p style="margin:0"><b>Technická poznámka k tomuto webu:</b> údaje vyplněné v objednávkovém formuláři na stránce <a href="/kontakt/">Kontakt</a> (jméno, e-mail, telefon, požadavek termínu, zpráva) jsou doručeny e-mailem provozovateli a slouží výhradně k vyřízení poptávky. Web nepoužívá sledovací ani reklamní cookies. Mapa Google se načítá až po kliknutí na tlačítko „Zobrazit mapu“.</p>
+      <p style="margin:0"><b>Technická poznámka k tomuto webu:</b> údaje vyplněné v objednávkovém formuláři na stránce <a href="/kontakt/">Kontakt</a> (jméno, e-mail, telefon, požadavek termínu, zpráva) jsou doručeny e-mailem provozovateli a slouží výhradně k vyřízení poptávky. Mapa Google se načítá až po kliknutí na tlačítko „Zobrazit mapu“.</p>
     </div>
+
+    <h2 id="cookies">10. Cookies a měření účinnosti reklamy</h2>
+    <ol>
+        <li><b>10.1.</b><span>Web ke svému provozu nepotřebuje žádné cookies. Jedinou výjimkou je uložení Vaší volby ohledně měření (klíč <code>ap_consent</code> v úložišti prohlížeče), aby se dotaz nezobrazoval opakovaně.</span></li>
+        <li><b>10.2.</b><span>Pokud provozovatel využívá placenou reklamu (Google Ads, Seznam Sklik), může web měřit, zda reklama vedla k odeslání poptávky nebo kliknutí na telefonní číslo. K tomu slouží měřicí kódy společností Google (Google Ads, Google Analytics 4) a Seznam.cz (Sklik), které ukládají cookies a předávají těmto společnostem technické údaje o návštěvě (IP adresa, identifikátor prohlížeče, navštívená stránka). Žádné údaje z formuláře (jméno, e-mail, telefon, zpráva) se do měření nepředávají.</span></li>
+        <li><b>10.3.</b><span>Měřicí kódy se načtou výhradně po Vašem souhlasu v liště „Nastavení cookies“ ve spodní části stránky. Do té doby, a pokud zvolíte „Odmítnout“, web žádné údaje třetím stranám nepředává a žádné měřicí cookies neukládá. Pokud měření není nastavené, lišta se nezobrazuje vůbec.</span></li>
+        <li><b>10.4.</b><span>Svou volbu můžete kdykoli změnit odkazem „Nastavení cookies“ v patičce každé stránky nebo smazáním údajů webu v nastavení prohlížeče.</span></li>
+    </ol>
   </div>
 </section>
 </main>
@@ -183,11 +193,17 @@
   </nav>
   <div class="copyright">
     <div class="container">
-      <span>© 2026 AutoPraizler M.L.</span><span class="sep" aria-hidden="true">|</span><a href="/ochrana-osobnich-udaju/">Ochrana osobních údajů</a>
+      <span>© 2026 AutoPraizler M.L.</span><span class="sep" aria-hidden="true">|</span><a href="/ochrana-osobnich-udaju/">Ochrana osobních údajů</a><span class="cookie-settings" hidden><span class="sep" aria-hidden="true">|</span><button type="button" class="link-btn">Nastavení cookies</button></span>
     </div>
   </div>
 </footer>
+<nav class="call-bar" aria-label="Rychlý kontakt (mobil)">
+  <a class="call-bar__call" href="tel:+420728920290"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg>Zavolat</a>
+  <a class="call-bar__book" href="/kontakt/#formular"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-calendar"/></svg>Objednat</a>
+</nav>
 <button class="to-top" type="button" aria-label="Zpět nahoru"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-chevron-up"/></svg></button>
 <script src="/js/main.js" defer></script>
+<script src="/js/config.js" defer></script>
+<script src="/js/mereni.js" defer></script>
 </body>
 </html>
